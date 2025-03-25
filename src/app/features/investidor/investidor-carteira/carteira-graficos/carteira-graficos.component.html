@@ -1,0 +1,266 @@
+<app-investidor-header></app-investidor-header>
+<div class="dashboard-container">
+
+  <div class="main-content">
+    <section class="chart-section">
+      <div class="section-header">
+        <h2>Evolução do Patrimônio</h2>
+        <div class="filters">
+          <div class="filter-dropdown" (click)="$event.stopPropagation()">
+            <div class="dropdown-trigger" (click)="toggleDropdown(dropdowns[0])">
+              <span>{{ dropdowns[0].label }}</span>
+              <span class="dropdown-icon">▼</span>
+            </div>
+            <ul class="dropdown-menu" *ngIf="dropdowns[0].isOpen">
+              <li
+                *ngFor="let option of dropdowns[0].options"
+                (click)="selectOption(dropdowns[0], option)"
+              >
+                {{ option }}
+              </li>
+            </ul>
+          </div>
+
+          <div class="filter-dropdown" (click)="$event.stopPropagation()">
+            <div class="dropdown-trigger" (click)="toggleDropdown(dropdowns[1])">
+              <span>{{ dropdowns[1].label }}</span>
+              <span class="dropdown-icon">▼</span>
+            </div>
+            <ul class="dropdown-menu" *ngIf="dropdowns[1].isOpen">
+              <li
+                *ngFor="let option of dropdowns[1].options"
+                (click)="selectOption(dropdowns[1], option)"
+              >
+                {{ option }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="chart-container">
+        <canvas #patrimonyEvolutionChart></canvas>
+      </div>
+    </section>
+
+    <section class="chart-section">
+      <div class="section-header">
+        <h2>Ativos na carteira</h2>
+      </div>
+      <div class="pie-chart-container">
+        <canvas #assetsDistributionChart></canvas>
+        <div class="pie-chart-legend">
+          <div class="legend-item">
+            <span class="legend-color crypto"></span>
+            <span class="legend-label">50% Criptomoedas</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color fixed-income"></span>
+            <span class="legend-label">50% Renda Fixa</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="main-content">
+    <section class="chart-section">
+      <div class="section-header">
+        <h2>Rentabilidade Anual</h2>
+      </div>
+      <div class="chart-container">
+        <canvas #annualReturnChart></canvas>
+      </div>
+    </section>
+
+    <section class="chart-section">
+      <div class="section-header">
+        <h2>Patrimônio por Categoria</h2>
+      </div>
+      <div class="pie-chart-container">
+        <canvas #categoryDistributionChart></canvas>
+        <div class="pie-chart-legend">
+          <div class="legend-item">
+            <span class="legend-color stocks"></span>
+            <span class="legend-label">30% Ações</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color crypto"></span>
+            <span class="legend-label">40% Criptomoedas</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color fixed-income"></span>
+            <span class="legend-label">30% Renda Fixa</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="historical-performance">
+    <div class="section-header">
+      <h2>Histórico de Performance</h2>
+      <div class="filters">
+        <div class="filter-dropdown">
+          <span>ÚLTIMOS 12 MESES</span>
+          <span class="dropdown-icon">▼</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="performance-table-container">
+      <table class="performance-table">
+        <thead>
+          <tr>
+            <th>Período</th>
+            <th>Rentabilidade</th>
+            <th>CDI</th>
+            <th>IBOVESPA</th>
+            <th>S&P 500</th>
+            <th>Bitcoin</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Janeiro 2025</td>
+            <td class="positive">+2.3%</td>
+            <td>+0.8%</td>
+            <td class="positive">+1.5%</td>
+            <td class="positive">+2.1%</td>
+            <td class="positive">+5.2%</td>
+          </tr>
+          <tr>
+            <td>Fevereiro 2025</td>
+            <td class="negative">-1.2%</td>
+            <td>+0.7%</td>
+            <td class="negative">-2.1%</td>
+            <td class="negative">-1.5%</td>
+            <td class="negative">-3.8%</td>
+          </tr>
+          <tr>
+            <td>Março 2025</td>
+            <td class="positive">+1.8%</td>
+            <td>+0.8%</td>
+            <td class="positive">+1.2%</td>
+            <td class="positive">+1.7%</td>
+            <td class="positive">+7.4%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="assets-section">
+    <div class="assets-header">
+      <h2>Ativos</h2>
+      <button class="add-asset-btn-secondary">Adicionar Ativo +</button>
+    </div>
+
+    <div class="assets-table-container">
+      <div class="asset-category">
+        <div class="category-header">
+          <div class="category-expand-icon">►</div>
+          <div class="category-name">FIS</div>
+          <div class="category-count">0 ATIVOS</div>
+          <div class="category-value">VALOR TOTAL: R$ 0,00</div>
+          <div class="category-variation">VARIAÇÃO: 0,00%</div>
+          <div class="category-percentage">% NA CARTEIRA: 0,00% (META: 20%)</div>
+        </div>
+      </div>
+
+      <div class="asset-category expanded">
+        <div class="category-header">
+          <div class="category-expand-icon">▼</div>
+          <div class="category-name">CRIPTOMOEDAS</div>
+          <div class="category-count">12 ATIVOS</div>
+          <div class="category-value">VALOR TOTAL: R$ 5.000,00</div>
+          <div class="category-variation neutral">VARIAÇÃO: 0,0%</div>
+          <div class="category-percentage">% NA CARTEIRA: 50% (META: 30%)</div>
+        </div>
+
+        <div class="category-content">
+          <table class="assets-table">
+            <thead>
+              <tr>
+                <th>Ativo</th>
+                <th>Quantidade</th>
+                <th>Preço Médio</th>
+                <th>Preço Atual</th>
+                <th>Variação</th>
+                <th>Rentabilidade</th>
+                <th>Saldo</th>
+                <th>Variação (24h)</th>
+                <th>Variação (30d)</th>
+                <th>Minha Nota</th>
+                <th>% Carteira</th>
+                <th>% Ideal</th>
+                <th>Comprar?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="asset-name">
+                  <div class="asset-icon crypto"></div>
+                  BTC
+                </td>
+                <td>0,05</td>
+                <td>R$ 78.500,00</td>
+                <td>R$ 80.000,00</td>
+                <td class="positive">+1,91%</td>
+                <td class="positive">+1,91%</td>
+                <td>R$ 4.000,00</td>
+                <td class="positive">+2,3%</td>
+                <td class="positive">+15,7%</td>
+                <td>
+                  <div class="rating">9</div>
+                </td>
+                <td>40,00%</td>
+                <td>30,00%</td>
+                <td class="buy-status">NÃO</td>
+              </tr>
+              <tr>
+                <td class="asset-name">
+                  <div class="asset-icon crypto"></div>
+                  ETH
+                </td>
+                <td>0,5</td>
+                <td>R$ 4.120,00</td>
+                <td>R$ 4.000,00</td>
+                <td class="negative">-2,91%</td>
+                <td class="negative">-2,91%</td>
+                <td>R$ 2.000,00</td>
+                <td class="negative">-1,2%</td>
+                <td class="positive">+5,4%</td>
+                <td>
+                  <div class="rating">8</div>
+                </td>
+                <td>20,00%</td>
+                <td>15,00%</td>
+                <td class="buy-status">SIM</td>
+              </tr>
+              <tr>
+                <td class="asset-name">
+                  <div class="asset-icon crypto"></div>
+                  UNI
+                </td>
+                <td>20,00</td>
+                <td>R$ 50,00</td>
+                <td>R$ 45,00</td>
+                <td class="negative">-10,00%</td>
+                <td class="negative">-10,00%</td>
+                <td>R$ 900</td>
+                <td class="negative">-2,50%</td>
+                <td class="negative">-8,70%</td>
+                <td>
+                  <div class="rating">7</div>
+                </td>
+                <td>9,00%</td>
+                <td>5,00%</td>
+                <td class="buy-status">NÃO</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

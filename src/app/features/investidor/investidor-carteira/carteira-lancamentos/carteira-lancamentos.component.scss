@@ -1,0 +1,371 @@
+@import 'variables';
+
+.lancamentos-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: $dark;
+
+}
+
+.lancamentos-section {
+  background-color: $dark-lighter;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: $white;
+  }
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-dropdown {
+  background-color: $dark-lightest;
+  border: 1px solid $gray;
+  border-radius: 4px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  color: $light-gray;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $ambar;
+  }
+}
+
+.dropdown-icon {
+  font-size: 10px;
+  color: $ambar;
+}
+
+.add-lancamento-btn {
+  background-color: $ambar;
+  color: $dark;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  margin-left: 10px;
+
+  &:hover {
+    background-color: darken($ambar, 10%);
+  }
+}
+
+.lancamentos-container {
+  background-color: $dark;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.lancamentos-tabs {
+  display: flex;
+  background-color: $dark-lightest;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  overflow-x: auto;
+
+  .tab {
+    padding: 12px 20px;
+    font-size: 14px;
+    color: $light-gray;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+      color: $white;
+    }
+
+    &.active {
+      color: $ambar;
+      border-bottom: 2px solid $ambar;
+      font-weight: 600;
+    }
+  }
+}
+
+.lancamentos-table-container {
+  overflow-x: auto;
+  padding: 0;
+}
+
+.lancamentos-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+
+  th {
+    padding: 12px 15px;
+    text-align: left;
+    background-color: $dark-lightest;
+    color: $light-gray;
+    font-weight: 500;
+    font-size: 13px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid $dark-lightest;
+    font-size: 14px;
+    color: $white;
+  }
+}
+
+.lancamento-tipo {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+
+  &.compra {
+    background-color: rgba($green, 0.15);
+    color: $green;
+  }
+
+  &.venda {
+    background-color: rgba($red, 0.15);
+    color: $red;
+  }
+
+  &.dividendo {
+    background-color: rgba($blue, 0.15);
+    color: $blue;
+  }
+
+  &.transferencia {
+    background-color: rgba($ambar, 0.15);
+    color: $ambar;
+  }
+}
+
+.asset-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.asset-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.crypto {
+    background-color: $green;
+  }
+
+  &.fis {
+    background-color: $blue;
+  }
+}
+
+.acoes-container {
+  display: flex;
+  gap: 5px;
+}
+
+.action-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $dark-lightest;
+  color: $light-gray;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: lighten($dark-lightest, 10%);
+  }
+
+  &.edit:hover {
+    color: $ambar;
+  }
+
+  &.delete:hover {
+    color: $red;
+  }
+}
+
+.lancamentos-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  gap: 15px;
+}
+
+.pagination-btn {
+  background-color: $dark-lightest;
+  border: 1px solid $gray;
+  border-radius: 4px;
+  padding: 8px 15px;
+  color: $light-gray;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $ambar;
+    color: $white;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.page-numbers {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.page-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background-color: $dark-lightest;
+  border: 1px solid $gray;
+  color: $light-gray;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $ambar;
+    color: $white;
+  }
+
+  &.active {
+    background-color: $ambar;
+    color: $dark;
+    border-color: $ambar;
+  }
+}
+
+.lancamentos-summary {
+  background-color: $dark-lighter;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: $white;
+  }
+
+  .period-display {
+    color: $light-gray;
+    font-size: 14px;
+    padding: 5px 10px;
+    background-color: $dark-lightest;
+    border-radius: 4px;
+  }
+}
+
+.summary-cards {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.summary-card {
+  flex: 1;
+  min-width: 200px;
+  background-color: $dark;
+  border-radius: 6px;
+  padding: 15px;
+
+  .card-title {
+    font-size: 14px;
+    color: $light-gray;
+    margin-bottom: 8px;
+  }
+
+  .card-value {
+    font-size: 20px;
+    font-weight: 600;
+    color: $white;
+
+    &.positive {
+      color: $green;
+    }
+
+    &.negative {
+      color: $red;
+    }
+  }
+}
+
+.positive {
+  color: $green !important;
+}
+
+.negative {
+  color: $red !important;
+}
+
+@media (max-width: 768px) {
+  .summary-cards {
+    flex-direction: column;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filters {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

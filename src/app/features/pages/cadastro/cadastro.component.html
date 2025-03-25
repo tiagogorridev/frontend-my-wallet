@@ -1,0 +1,77 @@
+<div class="cadastro-container">
+  <div class="cadastro-content">
+    <div class="welcome-message">
+      <h1>Crie uma Conta</h1>
+      <h2>Facilite a sua vida criando uma conta no MyWallet.</h2>
+    </div>
+    <div class="cadastro-form">
+      <form>
+        <div class="form-group">
+          <label for="nome"></label>
+          <input
+            type="text"
+            id="nome"
+            name="nome"
+            placeholder="Nome Completo"
+            class="input-field"
+          >
+        </div>
+        <div class="form-group calendar-container">
+          <label for="dataNascimento"></label>
+          <input
+            type="date"
+            id="dataNascimento"
+            name="dataNascimento"
+            [(ngModel)]="startDate"
+            class="input-field"
+            placeholder="Data de Nascimento"
+            required
+          >
+        </div>
+        <div class="form-group">
+          <label for="email"></label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Email"
+            class="input-field"
+          >
+        </div>
+        <div class="form-group password-group">
+          <label for="password"></label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Senha"
+            class="input-field"
+          >
+          <span class="password-toggle">
+            <i class="pi pi-eye"></i>
+          </span>
+        </div>
+        <div class="form-group password-group">
+          <label for="confirmPassword"></label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            placeholder="Confirmação da Senha"
+            class="input-field"
+          >
+          <span class="password-toggle">
+            <i class="pi pi-eye"></i>
+          </span>
+        </div>
+        <div class="cadastro-btn">
+          <button type="submit" class="cadastro-btn">Cadastrar</button>
+        </div>
+        <div class="no-account">
+          <a href="login">Já possuo uma conta</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="cadastro-background"></div>
+</div>

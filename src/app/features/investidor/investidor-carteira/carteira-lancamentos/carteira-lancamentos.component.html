@@ -1,0 +1,187 @@
+<app-investidor-header></app-investidor-header>
+<div class="dashboard-container">
+  <main class="lancamentos-content">
+    <section class="lancamentos-section">
+      <div class="section-header">
+        <h2>Lançamentos</h2>
+        <div class="filters">
+          <div class="filter-dropdown">
+            <span>ÚLTIMOS 30 DIAS</span>
+            <span class="dropdown-icon">▼</span>
+          </div>
+          <div class="filter-dropdown">
+            <span>TODOS OS TIPOS</span>
+            <span class="dropdown-icon">▼</span>
+          </div>
+          <button class="add-lancamento-btn">Novo Lançamento +</button>
+        </div>
+      </div>
+
+      <div class="lancamentos-container">
+        <div class="lancamentos-tabs">
+          <div class="tab active">Todos</div>
+          <div class="tab">Compras</div>
+          <div class="tab">Vendas</div>
+          <div class="tab">Dividendos</div>
+          <div class="tab">Transferências</div>
+        </div>
+
+        <div class="lancamentos-table-container">
+          <table class="lancamentos-table">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Tipo</th>
+                <th>Ativo</th>
+                <th>Descrição</th>
+                <th>Quantidade</th>
+                <th>Valor Unitário</th>
+                <th>Valor Total</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>20/03/2025</td>
+                <td>
+                  <div class="lancamento-tipo compra">Compra</div>
+                </td>
+                <td class="asset-name">
+                  <div class="asset-icon crypto"></div>
+                  BTC
+                </td>
+                <td>Compra de Bitcoin</td>
+                <td>0,05</td>
+                <td>R$ 78.500,00</td>
+                <td>R$ 3.925,00</td>
+                <td>
+                  <div class="acoes-container">
+                    <button class="action-btn edit"><i class="fa fa-edit"></i></button>
+                    <button class="action-btn delete"><i class="fa fa-trash"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>15/03/2025</td>
+                <td>
+                  <div class="lancamento-tipo venda">Venda</div>
+                </td>
+                <td class="asset-name">
+                  <div class="asset-icon crypto"></div>
+                  ETH
+                </td>
+                <td>Venda de Ethereum</td>
+                <td>0,8</td>
+                <td>R$ 4.120,00</td>
+                <td>R$ 3.296,00</td>
+                <td>
+                  <div class="acoes-container">
+                    <button class="action-btn edit"><i class="fa fa-edit"></i></button>
+                    <button class="action-btn delete"><i class="fa fa-trash"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>10/03/2025</td>
+                <td>
+                  <div class="lancamento-tipo dividendo">Dividendo</div>
+                </td>
+                <td class="asset-name">
+                  <div class="asset-icon fis"></div>
+                  PETR4
+                </td>
+                <td>Dividendo Petrobras</td>
+                <td>50</td>
+                <td>R$ 2,35</td>
+                <td>R$ 117,50</td>
+                <td>
+                  <div class="acoes-container">
+                    <button class="action-btn edit"><i class="fa fa-edit"></i></button>
+                    <button class="action-btn delete"><i class="fa fa-trash"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>05/03/2025</td>
+                <td>
+                  <div class="lancamento-tipo transferencia">Transferência</div>
+                </td>
+                <td class="asset-name">
+                  <div class="asset-icon"></div>
+                  --
+                </td>
+                <td>Transferência para conta</td>
+                <td>--</td>
+                <td>--</td>
+                <td>R$ 2.000,00</td>
+                <td>
+                  <div class="acoes-container">
+                    <button class="action-btn edit"><i class="fa fa-edit"></i></button>
+                    <button class="action-btn delete"><i class="fa fa-trash"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>01/03/2025</td>
+                <td>
+                  <div class="lancamento-tipo compra">Compra</div>
+                </td>
+                <td class="asset-name">
+                  <div class="asset-icon fis"></div>
+                  VALE3
+                </td>
+                <td>Compra de Vale</td>
+                <td>30</td>
+                <td>R$ 68,75</td>
+                <td>R$ 2.062,50</td>
+                <td>
+                  <div class="acoes-container">
+                    <button class="action-btn edit"><i class="fa fa-edit"></i></button>
+                    <button class="action-btn delete"><i class="fa fa-trash"></i></button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="lancamentos-pagination">
+          <button class="pagination-btn prev">Anterior</button>
+          <div class="page-numbers">
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <span>...</span>
+            <button class="page-btn">10</button>
+          </div>
+          <button class="pagination-btn next">Próximo</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="lancamentos-summary">
+      <div class="summary-header">
+        <h3>Resumo do Período</h3>
+        <div class="period-display">01/03/2025 - 20/03/2025</div>
+      </div>
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="card-title">Total Investido</div>
+          <div class="card-value">R$ 5.987,50</div>
+        </div>
+        <div class="summary-card">
+          <div class="card-title">Total Resgatado</div>
+          <div class="card-value">R$ 3.296,00</div>
+        </div>
+        <div class="summary-card">
+          <div class="card-title">Rendimentos</div>
+          <div class="card-value positive">R$ 117,50</div>
+        </div>
+        <div class="summary-card">
+          <div class="card-title">Saldo</div>
+          <div class="card-value">R$ 2.809,00</div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>

@@ -1,0 +1,167 @@
+<app-investidor-header></app-investidor-header>
+<div class="dashboard-container">
+  <main class="main-content">
+    <section class="goals-summary">
+      <div class="section-header">
+        <h2>Resumo das Metas</h2>
+        <button class="add-goal-btn">Nova Meta +</button>
+      </div>
+      <div class="goals-stats">
+        <div class="goal-stat-card">
+          <div class="stat-value">3</div>
+          <div class="stat-label">Metas em andamento</div>
+          <div class="progress-bar">
+            <div class="progress" style="width: 60%;"></div>
+          </div>
+        </div>
+        <div class="goal-stat-card">
+          <div class="stat-value">2</div>
+          <div class="stat-label">Metas concluídas</div>
+          <div class="progress-bar completed">
+            <div class="progress" style="width: 100%;"></div>
+          </div>
+        </div>
+        <div class="goal-stat-card">
+          <div class="stat-value">R$ 25.000,00</div>
+          <div class="stat-label">Total a alcançar</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="goals-chart">
+      <div class="section-header">
+        <h2>Progresso das Metas</h2>
+        <div class="filters">
+          <div class="filter-dropdown">
+            <span>TODAS AS METAS</span>
+            <span class="dropdown-icon">▼</span>
+          </div>
+        </div>
+      </div>
+      <div class="chart-container"></div>
+    </section>
+  </main>
+
+  <section class="goals-section">
+    <div class="goals-header">
+      <h2>Minhas Metas</h2>
+      <div class="goals-tabs">
+        <button class="goal-tab active">Todas</button>
+        <button class="goal-tab">Em andamento</button>
+        <button class="goal-tab">Concluídas</button>
+      </div>
+    </div>
+
+    <div class="goals-list">
+      <!-- Meta em andamento -->
+      <div class="goal-card">
+        <div class="goal-header">
+          <div class="goal-title-container">
+            <div class="goal-icon reserve"></div>
+            <div class="goal-title-info">
+              <h3 class="goal-title">Reserva de Emergência</h3>
+              <span class="goal-subtitle">Curto prazo • Essencial</span>
+            </div>
+          </div>
+          <div class="goal-actions">
+            <button class="goal-action-btn"><span class="action-icon edit">✏️</span></button>
+            <button class="goal-action-btn"><span class="action-icon delete">🗑️</span></button>
+          </div>
+        </div>
+        <div class="goal-progress">
+          <div class="progress-info">
+            <div class="current-value">R$ 3.500,00</div>
+            <div class="target-value">R$ 6.000,00</div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress" style="width: 58%;"></div>
+          </div>
+          <div class="progress-percentage">58%</div>
+        </div>
+        <div class="goal-details">
+          <div class="goal-detail">
+            <span class="detail-label">Data alvo:</span>
+            <span class="detail-value">31/12/2025</span>
+          </div>
+          <div class="goal-detail">
+            <span class="detail-label">Estratégia:</span>
+            <span class="detail-value">100% Renda Fixa</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Meta concluída -->
+      <div class="goal-card completed">
+        <div class="goal-header">
+          <div class="goal-title-container">
+            <div class="goal-icon vacation"></div>
+            <div class="goal-title-info">
+              <h3 class="goal-title">Viagem para Europa</h3>
+              <span class="goal-subtitle">Médio prazo • Lazer</span>
+            </div>
+          </div>
+          <div class="goal-status">
+            <span class="status-badge">Concluída</span>
+          </div>
+        </div>
+        <div class="goal-progress">
+          <div class="progress-info">
+            <div class="current-value">R$ 15.000,00</div>
+            <div class="target-value">R$ 15.000,00</div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress" style="width: 100%;"></div>
+          </div>
+          <div class="progress-percentage">100%</div>
+        </div>
+        <div class="goal-details">
+          <div class="goal-detail">
+            <span class="detail-label">Concluída em:</span>
+            <span class="detail-value">15/01/2025</span>
+          </div>
+          <div class="goal-detail">
+            <span class="detail-label">Estratégia:</span>
+            <span class="detail-value">70% RF / 30% Criptos</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Meta em andamento -->
+      <div class="goal-card">
+        <div class="goal-header">
+          <div class="goal-title-container">
+            <div class="goal-icon house"></div>
+            <div class="goal-title-info">
+              <h3 class="goal-title">Entrada para Imóvel</h3>
+              <span class="goal-subtitle">Longo prazo • Patrimonial</span>
+            </div>
+          </div>
+          <div class="goal-actions">
+            <button class="goal-action-btn"><span class="action-icon edit">✏️</span></button>
+            <button class="goal-action-btn"><span class="action-icon delete">🗑️</span></button>
+          </div>
+        </div>
+        <div class="goal-progress">
+          <div class="progress-info">
+            <div class="current-value">R$ 35.000,00</div>
+            <div class="target-value">R$ 100.000,00</div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress" style="width: 35%;"></div>
+          </div>
+          <div class="progress-percentage">35%</div>
+        </div>
+        <div class="goal-details">
+          <div class="goal-detail">
+            <span class="detail-label">Data alvo:</span>
+            <span class="detail-value">01/01/2028</span>
+          </div>
+          <div class="goal-detail">
+            <span class="detail-label">Estratégia:</span>
+            <span class="detail-value">60% RF / 30% FIIs / 10% Ações</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

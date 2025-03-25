@@ -1,0 +1,80 @@
+<header class="header">
+  <div class="logo-container">
+    <div class="logo-img">
+      <i class="pi pi-wallet"></i>
+    </div>
+    <div class="logo">
+      <h1>MyWallet</h1>
+    </div>
+  </div>
+
+  <div class="investment-summary">
+    <div class="summary-item">
+      <div class="summary-label">
+        <i class="pi pi-money-bill"></i>
+        <span>VALOR APLICADO</span>
+      </div>
+      <span class="summary-value">R$ 10.000,00</span>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">
+        <i class="pi pi-dollar"></i>
+        <span>SALDO BRUTO</span>
+      </div>
+      <span class="summary-value">R$ 10.000,00</span>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">
+        <i class="pi pi-chart-line"></i>
+        <span>VARIAÇÃO</span>
+      </div>
+      <span class="summary-value neutral">0,00%</span>
+    </div>
+  </div>
+
+  <div class="portfolio-selector">
+    <div class="current-portfolio">
+      Carteira Principal
+    </div>
+  </div>
+
+  <button class="add-asset-btn">
+    <i class="pi pi-plus"></i>
+    <span>Adicionar Ativo</span>
+  </button>
+
+  <div class="user-profile" [routerLink]="['/investidor/profile']" routerLinkActive="active">
+    <i class="pi pi-user"></i>
+  </div>
+</header>
+
+<nav class="nav-menu">
+  <div class="nav-item" [routerLink]="['/investidor/carteira-resumo']" routerLinkActive="active">
+    <i class="pi pi-home"></i>
+    <span>RESUMO</span>
+  </div>
+  <div class="nav-item" [routerLink]="['/investidor/carteira-proventos']" routerLinkActive="active">
+    <i class="pi pi-chart-bar"></i>
+    <span>PROVENTOS</span>
+  </div>
+  <div class="nav-item" [routerLink]="['/investidor/carteira-graficos']" routerLinkActive="active">
+    <i class="pi pi-chart-line"></i>
+    <span>GRÁFICOS</span>
+  </div>
+  <div class="nav-item" [routerLink]="['/investidor/carteira-metas']" routerLinkActive="active">
+    <i class="pi pi-flag"></i>
+    <span>METAS</span>
+  </div>
+  <div class="nav-item" [routerLink]="['/investidor/carteira-analise']" routerLinkActive="active">
+    <i class="pi pi-search"></i>
+    <span>ANÁLISE</span>
+  </div>
+  <div class="nav-item" [routerLink]="['/investidor/carteira-lancamentos']" routerLinkActive="active">
+    <i class="pi pi-list"></i>
+    <span>LANÇAMENTOS</span>
+  </div>
+  <div class="nav-item" [routerLink]="['/investidor/carteira-configuracoes']" routerLinkActive="active">
+    <i class="pi pi-cog"></i>
+    <span>CONFIGURAÇÕES</span>
+  </div>
+</nav>
