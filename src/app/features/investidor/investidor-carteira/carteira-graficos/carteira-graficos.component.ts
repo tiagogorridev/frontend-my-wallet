@@ -2,6 +2,11 @@ import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import Chart from 'chart.js/auto';
 
+interface AssetCategory {
+  name: string;
+  isExpanded: boolean;
+}
+
 @Component({
   selector: 'app-carteira-graficos',
   templateUrl: './carteira-graficos.component.html',
@@ -24,8 +29,20 @@ export class CarteiraGraficosComponent implements OnInit {
       label: 'TODOS',
       options: ['TODOS', 'CRIPTOS', 'RENDA FIXA', 'AÇÕES'],
       isOpen: false
+    },
+    {
+      label: '12 MESES',
+      options: ['3 MESES', '6 MESES', '12 MESES', '24 MESES'],
+      isOpen: false,
+      onSelect: (option: string) => this.updatePerformanceTable(option)
     }
   ];
+
+  assetCategories: AssetCategory[] = [
+    { name: 'FIS', isExpanded: false },
+    { name: 'CRIPTOMOEDAS', isExpanded: false }
+  ];
+
 
   private chartInstances: { [key: string]: Chart } = {};
 
@@ -248,6 +265,16 @@ export class CarteiraGraficosComponent implements OnInit {
     this.updatePatrimonyChart(monthsToShow);
   }
 
+  toggleCategoryExpansion(category: AssetCategory) {
+    this.assetCategories.forEach(cat => {
+      if (cat !== category) {
+        cat.isExpanded = false;
+      }
+    });
+
+    category.isExpanded = !category.isExpanded;
+  }
+
   private updatePatrimonyChart(monthsToShow: number) {
     const chart = this.chartInstances['patrimony'];
     if (!chart) return;
@@ -265,5 +292,9 @@ export class CarteiraGraficosComponent implements OnInit {
     chart.data.labels = labels;
     chart.data.datasets[0].data = data;
     chart.update();
+  }
+
+  updatePerformanceTable(timeframe: string) {
+    console.log(`Performance table filtered by: ${timeframe}`);
   }
 }

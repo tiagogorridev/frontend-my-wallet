@@ -100,9 +100,19 @@
     <div class="section-header">
       <h2>Histórico de Performance</h2>
       <div class="filters">
-        <div class="filter-dropdown">
-          <span>ÚLTIMOS 12 MESES</span>
-          <span class="dropdown-icon">▼</span>
+        <div class="filter-dropdown" (click)="$event.stopPropagation()">
+          <div class="dropdown-trigger" (click)="toggleDropdown(dropdowns[2])">
+            <span>{{ dropdowns[2].label }}</span>
+            <span class="dropdown-icon">▼</span>
+          </div>
+          <ul class="dropdown-menu" *ngIf="dropdowns[2].isOpen">
+            <li
+              *ngFor="let option of dropdowns[2].options"
+              (click)="selectOption(dropdowns[2], option)"
+            >
+              {{ option }}
+            </li>
+          </ul>
         </div>
       </div>
     </div>
@@ -156,29 +166,84 @@
     </div>
 
     <div class="assets-table-container">
-      <div class="asset-category">
-        <div class="category-header">
-          <div class="category-expand-icon">►</div>
-          <div class="category-name">FIS</div>
-          <div class="category-count">0 ATIVOS</div>
-          <div class="category-value">VALOR TOTAL: R$ 0,00</div>
+      <div
+        class="asset-category"
+        *ngFor="let category of assetCategories"
+        [class.expanded]="category.isExpanded"
+      >
+        <div
+          class="category-header"
+          (click)="toggleCategoryExpansion(category)"
+        >
+          <div class="category-expand-icon">{{ category.isExpanded ? '▼' : '►' }}</div>
+          <div class="category-name">{{ category.name }}</div>
+          <div class="category-count">
+            {{ category.name === 'CRIPTOMOEDAS' ? '12 ATIVOS' : '0 ATIVOS' }}
+          </div>
+          <div class="category-value">
+            VALOR TOTAL: {{ category.name === 'CRIPTOMOEDAS' ? 'R$ 5.000,00' : 'R$ 0,00' }}
+          </div>
           <div class="category-variation">VARIAÇÃO: 0,00%</div>
-          <div class="category-percentage">% NA CARTEIRA: 0,00% (META: 20%)</div>
-        </div>
-      </div>
-
-      <div class="asset-category expanded">
-        <div class="category-header">
-          <div class="category-expand-icon">▼</div>
-          <div class="category-name">CRIPTOMOEDAS</div>
-          <div class="category-count">12 ATIVOS</div>
-          <div class="category-value">VALOR TOTAL: R$ 5.000,00</div>
-          <div class="category-variation neutral">VARIAÇÃO: 0,0%</div>
-          <div class="category-percentage">% NA CARTEIRA: 50% (META: 30%)</div>
+          <div class="category-percentage">
+            % NA CARTEIRA: {{ category.name === 'CRIPTOMOEDAS' ? '50%' : '0,00%' }}
+            (META: {{ category.name === 'CRIPTOMOEDAS' ? '30%' : '20%' }})
+          </div>
         </div>
 
-        <div class="category-content">
-          <table class="assets-table">
+        <div
+          class="category-content"
+          *ngIf="category.isExpanded"
+          (click)="$event.stopPropagation()"
+        >
+          <table
+            *ngIf="category.name === 'FIS'"
+            class="assets-table"
+          >
+            <thead>
+              <tr>
+                <th>Ativo</th>
+                <th>Quantidade</th>
+                <th>Preço Médio</th>
+                <th>Preço Atual</th>
+                <th>Variação</th>
+                <th>Rentabilidade</th>
+                <th>Saldo</th>
+                <th>Variação (24h)</th>
+                <th>Variação (30d)</th>
+                <th>Minha Nota</th>
+                <th>% Carteira</th>
+                <th>% Ideal</th>
+                <th>Comprar?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="asset-name">
+                  <div class="asset-icon crypto"></div>
+                  HGLG11
+                </td>
+                <td>0,00</td>
+                <td>R$ 0,00</td>
+                <td>R$ 0,00</td>
+                <td class="negative">-0,00%</td>
+                <td class="negative">-0,00%</td>
+                <td>R$ 0</td>
+                <td class="negative">-0,00%</td>
+                <td class="negative">-0,00%</td>
+                <td>
+                  <div class="rating">10</div>
+                </td>
+                <td>0,00%</td>
+                <td>0,00%</td>
+                <td class="buy-status">NÃO</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table
+            *ngIf="category.name === 'CRIPTOMOEDAS'"
+            class="assets-table"
+          >
             <thead>
               <tr>
                 <th>Ativo</th>
