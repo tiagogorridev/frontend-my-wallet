@@ -7,6 +7,13 @@ interface AssetCategory {
   isExpanded: boolean;
 }
 
+interface Dropdown {
+  label: string;
+  options: string[];
+  isOpen: boolean;
+  onSelect?: (option: string) => void;
+}
+
 @Component({
   selector: 'app-carteira-graficos',
   templateUrl: './carteira-graficos.component.html',
@@ -18,7 +25,17 @@ export class CarteiraGraficosComponent implements OnInit {
   @ViewChild('annualReturnChart', { static: true }) annualReturnChartRef!: ElementRef;
   @ViewChild('categoryDistributionChart', { static: true }) categoryDistributionChartRef!: ElementRef;
 
-  dropdowns = [
+  isModalOpen = false;
+  assetForm!: FormGroup;
+
+  assetTypes = [
+    { value: 'crypto', label: 'Criptomoeda' },
+    { value: 'fixed-income', label: 'Renda Fixa' },
+    { value: 'stocks', label: 'Ações' },
+    { value: 'fiis', label: 'FIIS' }
+  ];
+
+  dropdowns: Dropdown[] = [
     {
       label: '12 MESES',
       options: ['3 MESES', '6 MESES', '12 MESES', '24 MESES'],
@@ -43,28 +60,73 @@ export class CarteiraGraficosComponent implements OnInit {
     { name: 'CRIPTOMOEDAS', isExpanded: false }
   ];
 
-
   private chartInstances: { [key: string]: Chart } = {};
+  private readonly months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.initForm();
+    this.initializeCharts();
+  }
+
+  private initializeCharts(): void {
     this.createPatrimonyEvolutionChart();
     this.createAssetsDistributionChart();
     this.createAnnualReturnChart();
     this.createCategoryDistributionChart();
   }
 
+  initForm(): void {
+    this.assetForm = this.fb.group({
+      type: ['', Validators.required],
+      name: ['', Validators.required],
+      currentPrice: ['', [Validators.required, Validators.min(0)]],
+      purchaseDate: ['', Validators.required],
+      quantity: ['', [Validators.required, Validators.min(0)]],
+      purchaseValue: ['', [Validators.required, Validators.min(0)]]
+    });
+  }
+
+  onSubmit(): void {
+    if (this.assetForm.valid) {
+      console.log(this.assetForm.value);
+      this.closeModal();
+    } else {
+      Object.keys(this.assetForm.controls).forEach(field => {
+        const control = this.assetForm.get(field);
+        control?.markAsTouched();
+      });
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  handleEscapeKey(): void {
+    if (this.isModalOpen) {
+      this.closeModal();
+    }
+  }
+
   @HostListener('document:click')
-  onDocumentClick() {
+  onDocumentClick(): void {
     this.dropdowns.forEach(dropdown => dropdown.isOpen = false);
   }
 
-  toggleDropdown(dropdown: any) {
+  openModal(): void {
+    this.initForm();
+    this.isModalOpen = true;
+  }
+
+  closeModal(): void {
+    this.isModalOpen = false;
+    this.assetForm.reset();
+  }
+
+  toggleDropdown(dropdown: Dropdown): void {
     dropdown.isOpen = !dropdown.isOpen;
   }
 
-  selectOption(dropdown: any, option: string) {
+  selectOption(dropdown: Dropdown, option: string): void {
     dropdown.label = option;
     dropdown.isOpen = false;
     if (dropdown.onSelect) {
@@ -72,12 +134,61 @@ export class CarteiraGraficosComponent implements OnInit {
     }
   }
 
-  private getMonthYearLabel(date: Date): string {
-    const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-    return `${months[date.getMonth()]} / ${date.getFullYear()}`;
+  toggleCategoryExpansion(category: AssetCategory): void {
+    this.assetCategories.forEach(cat => {
+      if (cat !== category) {
+        cat.isExpanded = false;
+      }
+    });
+    category.isExpanded = !category.isExpanded;
   }
 
-  private createPatrimonyEvolutionChart() {
+  updateChartMonths(monthOption: string): void {
+    const monthsMap: { [key: string]: number } = {
+      '3 MESES': 3,
+      '6 MESES': 6,
+      '12 MESES': 12,
+      '24 MESES': 24
+    };
+
+    const monthsToShow = monthsMap[monthOption] || 12;
+    this.updatePatrimonyChart(monthsToShow);
+  }
+
+  updatePerformanceTable(timeframe: string): void {
+    console.log(`Performance table filtered by: ${timeframe}`);
+  }
+
+  private getMonthYearLabel(date: Date): string {
+    return `${this.months[date.getMonth()]} / ${date.getFullYear()}`;
+  }
+
+  private generateMonthlyValue(date: Date): number {
+    const baseValue = 10000;
+    const randomVariation = Math.random() * 2000 - 1000;
+    return baseValue + randomVariation;
+  }
+
+  private updatePatrimonyChart(monthsToShow: number): void {
+    const chart = this.chartInstances['patrimony'];
+    if (!chart) return;
+
+    const today = new Date();
+    const labels = [];
+    const data = [];
+
+    for (let i = monthsToShow - 1; i >= 0; i--) {
+      const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      labels.push(this.getMonthYearLabel(date));
+      data.push(this.generateMonthlyValue(date));
+    }
+
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = data;
+    chart.update();
+  }
+
+  private createPatrimonyEvolutionChart(): void {
     const ctx = this.patrimonyEvolutionChartRef.nativeElement.getContext('2d');
     const today = new Date();
     const labels = [];
@@ -106,7 +217,7 @@ export class CarteiraGraficosComponent implements OnInit {
     });
   }
 
-  private createAssetsDistributionChart() {
+  private createAssetsDistributionChart(): void {
     const ctx = this.assetsDistributionChartRef.nativeElement.getContext('2d');
     this.chartInstances['assets'] = new Chart(ctx, {
       type: 'pie',
@@ -122,26 +233,24 @@ export class CarteiraGraficosComponent implements OnInit {
     });
   }
 
-  private createAnnualReturnChart() {
+  private createAnnualReturnChart(): void {
     const ctx = this.annualReturnChartRef.nativeElement.getContext('2d');
-    const data = {
-      labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-      datasets: [{
-        label: 'Rentabilidade 2024',
-        data: [2.5, -1.2, 3.8, 1.5, 2.1, -0.8, 4.2, 1.9, 2.7, 3.1, -1.5, 2.9],
-        backgroundColor: '#FFA500',
-        borderRadius: 4
-      }]
-    };
-
     this.chartInstances['annualReturn'] = new Chart(ctx, {
       type: 'bar',
-      data: data,
+      data: {
+        labels: this.months,
+        datasets: [{
+          label: 'Rentabilidade 2024',
+          data: [2.5, -1.2, 3.8, 1.5, 2.1, -0.8, 4.2, 1.9, 2.7, 3.1, -1.5, 2.9],
+          backgroundColor: '#FFA500',
+          borderRadius: 4
+        }]
+      },
       options: this.getBarChartOptions()
     });
   }
 
-  private createCategoryDistributionChart() {
+  private createCategoryDistributionChart(): void {
     const ctx = this.categoryDistributionChartRef.nativeElement.getContext('2d');
     this.chartInstances['category'] = new Chart(ctx, {
       type: 'pie',
@@ -157,7 +266,7 @@ export class CarteiraGraficosComponent implements OnInit {
     });
   }
 
-  private getLineChartOptions() {
+  private getLineChartOptions(): any {
     return {
       responsive: true,
       maintainAspectRatio: false,
@@ -191,7 +300,7 @@ export class CarteiraGraficosComponent implements OnInit {
     };
   }
 
-  private getBarChartOptions() {
+  private getBarChartOptions(): any {
     return {
       responsive: true,
       maintainAspectRatio: false,
@@ -225,7 +334,7 @@ export class CarteiraGraficosComponent implements OnInit {
     };
   }
 
-  private getPieChartOptions() {
+  private getPieChartOptions(): any {
     return {
       responsive: true,
       maintainAspectRatio: false,
@@ -235,66 +344,5 @@ export class CarteiraGraficosComponent implements OnInit {
         }
       }
     };
-  }
-
-  private generateMonthlyValue(date: Date): number {
-    const baseValue = 10000;
-    const randomVariation = Math.random() * 2000 - 1000;
-    return baseValue + randomVariation;
-  }
-
-  updateChartMonths(monthOption: string) {
-    let monthsToShow: number;
-    switch(monthOption) {
-      case '3 MESES':
-        monthsToShow = 3;
-        break;
-      case '6 MESES':
-        monthsToShow = 6;
-        break;
-      case '12 MESES':
-        monthsToShow = 12;
-        break;
-      case '24 MESES':
-        monthsToShow = 24;
-        break;
-      default:
-        monthsToShow = 12;
-    }
-
-    this.updatePatrimonyChart(monthsToShow);
-  }
-
-  toggleCategoryExpansion(category: AssetCategory) {
-    this.assetCategories.forEach(cat => {
-      if (cat !== category) {
-        cat.isExpanded = false;
-      }
-    });
-
-    category.isExpanded = !category.isExpanded;
-  }
-
-  private updatePatrimonyChart(monthsToShow: number) {
-    const chart = this.chartInstances['patrimony'];
-    if (!chart) return;
-
-    const today = new Date();
-    const labels = [];
-    const data = [];
-
-    for (let i = monthsToShow - 1; i >= 0; i--) {
-      const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
-      labels.push(this.getMonthYearLabel(date));
-      data.push(this.generateMonthlyValue(date));
-    }
-
-    chart.data.labels = labels;
-    chart.data.datasets[0].data = data;
-    chart.update();
-  }
-
-  updatePerformanceTable(timeframe: string) {
-    console.log(`Performance table filtered by: ${timeframe}`);
   }
 }
