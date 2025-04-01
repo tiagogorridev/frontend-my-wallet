@@ -58,7 +58,6 @@
   padding: 20px;
 }
 
-// Profile Selection Styles
 .profile-selection {
   display: flex;
   gap: 15px;
@@ -118,7 +117,6 @@
   color: $light-gray;
 }
 
-// Allocation Table Styles
 .allocation-table-container {
   overflow-x: auto;
 }
@@ -202,7 +200,6 @@
   color: $ambar;
 }
 
-// Notification Settings Styles
 .notification-settings {
   display: flex;
   flex-direction: column;
@@ -235,7 +232,6 @@
   color: $light-gray;
 }
 
-// Switch Toggle Styles
 .switch {
   position: relative;
   display: inline-block;
@@ -291,7 +287,6 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
-// Account Settings Styles
 .account-settings {
   display: flex;
   flex-direction: column;
@@ -337,7 +332,6 @@ input:checked + .slider:before {
   margin-top: 10px;
 }
 
-// Buttons
 .save-btn, .change-password-btn, .save-account-btn {
   background-color: $ambar;
   color: $dark;
