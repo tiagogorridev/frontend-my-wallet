@@ -1,11 +1,5 @@
-import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import Chart from 'chart.js/auto';
-
-interface DropdownOption {
-  label: string;
-  options: string[];
-  isOpen: boolean;
-}
 
 interface MonthData {
   month: string;
@@ -41,35 +35,19 @@ export class CarteiraProventosComponent implements OnInit {
   private chartInstance: Chart | null = null;
   private readonly MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
+  // Variáveis para o ano selecionado
   selectedYear: number = new Date().getFullYear();
-  selectedChartYear: number = new Date().getFullYear();
 
-  dropdowns: DropdownOption[] = [
-    {
-      label: '12 MESES',
-      options: ['3 MESES', '6 MESES', '12 MESES', '24 MESES'],
-      isOpen: false
-    },
-    {
-      label: 'TODOS',
-      options: ['TODOS', 'DIVIDENDOS', 'JUROS'],
-      isOpen: false
-    }
-  ];
+  // Opções para filtros de período
+  periodoOptions: string[] = ['3 MESES', '6 MESES', '12 MESES', '24 MESES'];
+  selectedPeriodo: string = '12 MESES';
 
-  incomeDetailsDropdowns: DropdownOption[] = [
-    {
-      label: '12 MESES',
-      options: ['3 MESES', '6 MESES', '12 MESES', '24 MESES'],
-      isOpen: false
-    },
-    {
-      label: 'TIPO DE RENDA',
-      options: ['TODOS', 'DIVIDENDOS', 'JUROS'],
-      isOpen: false
-    }
-  ];
+  // Opções para os filtros da seção de detalhes
+  tiposDetalheOptions: string[] = ['TODOS', 'DIVIDENDOS', 'JUROS', 'ALUGUÉIS'];
+  selectedDetalhePeriodo: string = '12 MESES';
+  selectedDetalheTipo: string = 'TODOS';
 
+  // Dados de rendimento
   incomeData: Income[] = [
     {
       date: '20/03/2025',
@@ -119,6 +97,7 @@ export class CarteiraProventosComponent implements OnInit {
   ];
 
   filteredIncomeData: Income[] = [];
+  monthlyData: MonthData[] = [];
 
   yearlyData: { [key: number]: YearData } = {
     2024: {
@@ -190,33 +169,34 @@ export class CarteiraProventosComponent implements OnInit {
     this.updateIncomeSummaryCards();
     this.updateMonthlyBars();
     this.filteredIncomeData = [...this.incomeData];
+    this.monthlyData = [...this.yearlyData[this.selectedYear].monthlyData];
   }
 
-
-  toggleDropdown(dropdown: DropdownOption): void {
-    this.dropdowns.forEach(dd => {
-      if (dd !== dropdown) dd.isOpen = false;
-    });
-
-    dropdown.isOpen = !dropdown.isOpen;
+  // Métodos para os filtros do gráfico de evolução
+  onPeriodoSelected(periodo: string): void {
+    this.selectedPeriodo = periodo;
+    const monthMap: { [key: string]: number } = {
+      '3 MESES': 3,
+      '6 MESES': 6,
+      '12 MESES': 12,
+      '24 MESES': 24
+    };
+    const months = monthMap[periodo] || 12;
+    this.updatePatrimonioChart(months);
   }
 
-  selectOption(dropdown: DropdownOption, option: string): void {
-    dropdown.label = option;
-    dropdown.isOpen = false;
-
-    if (dropdown === this.dropdowns[0]) {
-      const monthMap: { [key: string]: number } = {
-        '3 MESES': 3,
-        '6 MESES': 6,
-        '12 MESES': 12,
-        '24 MESES': 24
-      };
-      const months = monthMap[option] || 12;
-      this.updatePatrimonioChart(months);
-    }
+  // Métodos para os filtros da seção de detalhes
+  onDetalhePeriodoSelected(periodo: string): void {
+    this.selectedDetalhePeriodo = periodo;
+    this.filterIncomeData();
   }
 
+  onDetalheTipoSelected(tipo: string): void {
+    this.selectedDetalheTipo = tipo;
+    this.filterIncomeData();
+  }
+
+  // Navegação entre anos
   navigatePrevYear(): void {
     const availableYears = Object.keys(this.yearlyData).map(Number);
     const currentIndex = availableYears.indexOf(this.selectedYear);
@@ -239,146 +219,44 @@ export class CarteiraProventosComponent implements OnInit {
     }
   }
 
-  toggleIncomeDetailsDropdown(dropdown: DropdownOption): void {
-    this.incomeDetailsDropdowns.forEach(dd => {
-      if (dd !== dropdown) dd.isOpen = false;
-    });
+  // Verificar se um mês é futuro
+  isFutureMonth(monthIndex: number): boolean {
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
 
-    dropdown.isOpen = !dropdown.isOpen;
+    return (this.selectedYear > currentYear) ||
+           (this.selectedYear === currentYear && monthIndex > currentMonth);
   }
 
-  selectIncomeDetailsOption(dropdown: DropdownOption, option: string): void {
-    dropdown.label = option;
-    dropdown.isOpen = false;
-    this.filterIncomeData();
+  // Obter altura proporcional para as barras
+  getBarHeight(value: number): number {
+    const maxValue = Math.max(...this.yearlyData[this.selectedYear].monthlyData.map(m => m.value));
+    return (value / maxValue) * 100;
   }
 
-  filterIncomeData(): void {
-    const timeRangeFilter = this.incomeDetailsDropdowns[0].label;
-    const incomeTypeFilter = this.incomeDetailsDropdowns[1].label;
+  // Obter a classe CSS para comparação de valores
+  getComparisonClass(currentValue: number, prevValue: number | undefined): string {
+    if (!prevValue) return 'neutral';
+    return currentValue >= prevValue ? 'positive' : 'negative';
+  }
 
+  // Calcular variação percentual
+  calculatePercentageChange(oldValue: number | undefined, newValue: number): string {
+    if (!oldValue || oldValue === 0) return '+0%';
+    const change = ((newValue - oldValue) / oldValue) * 100;
+    return `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
+  }
+
+  // Filtrar dados de rendimento
+  private filterIncomeData(): void {
     this.filteredIncomeData = this.incomeData.filter(income => {
       const incomeDate = this.parseDate(income.date);
       const currentDate = new Date();
 
-      const timeRangeValid = this.isValidTimeRange(incomeDate, currentDate, timeRangeFilter);
-      const incomeTypeValid = this.isValidIncomeType(income.incomeType, incomeTypeFilter);
+      const timeRangeValid = this.isValidTimeRange(incomeDate, currentDate, this.selectedDetalhePeriodo);
+      const incomeTypeValid = this.isValidIncomeType(income.incomeType, this.selectedDetalheTipo);
 
       return timeRangeValid && incomeTypeValid;
-    });
-  }
-
-  @HostListener('document:click', ['$event'])
-  handleOutsideClick(event: Event): void {
-    this.dropdowns.forEach(dropdown => {
-      dropdown.isOpen = false;
-    });
-
-    this.incomeDetailsDropdowns.forEach(dropdown => {
-      dropdown.isOpen = false;
-    });
-  }
-
-
-
-  private createPatrimonioChart(monthsToShow: number): void {
-    const ctx = this.patrimonioChartRef.nativeElement.getContext('2d');
-
-    if (this.chartInstance) {
-      this.chartInstance.destroy();
-    }
-
-    const labels = this.getChartLabels(monthsToShow);
-    const data = this.getChartData(monthsToShow);
-
-    this.chartInstance = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Evolução do Patrimônio',
-          data: data,
-          borderColor: '#FFA500',
-          backgroundColor: 'rgba(255, 165, 0, 0.2)',
-          tension: 0.4,
-          fill: true
-        }]
-      },
-      options: this.getChartOptions()
-    });
-  }
-
-  private updatePatrimonioChart(monthsToShow: number): void {
-    if (!this.chartInstance) return;
-
-    const labels = this.getChartLabels(monthsToShow);
-    const data = this.getChartData(monthsToShow);
-
-    this.chartInstance.data.labels = labels;
-    this.chartInstance.data.datasets[0].data = data;
-    this.chartInstance.update();
-  }
-
-  private updateIncomeSummaryCards(): void {
-    const yearData = this.yearlyData[this.selectedYear];
-    const prevYearData = this.yearlyData[this.selectedYear - 1];
-
-    const summaryCards = [
-      {
-        value: yearData.totalReceived,
-        comparisonText: this.calculatePercentageChange(prevYearData.totalReceived, yearData.totalReceived)
-      },
-      {
-        value: yearData.monthlyAverage,
-        comparisonText: this.calculatePercentageChange(prevYearData.monthlyAverage, yearData.monthlyAverage)
-      },
-      {
-        value: yearData.yield,
-        comparisonText: this.calculatePercentageChange(prevYearData.yield, yearData.yield)
-      },
-      {
-        value: yearData.annualProjection,
-        comparisonText: this.calculatePercentageChange(prevYearData.annualProjection, yearData.annualProjection)
-      }
-    ];
-
-    const cardElements = document.querySelectorAll('.summary-card');
-    cardElements.forEach((card, index) => {
-      const valueElement = card.querySelector('.card-value') as HTMLElement;
-      const comparisonElement = card.querySelector('.card-comparison') as HTMLElement;
-
-      const data = summaryCards[index];
-
-      valueElement.textContent = index === 2
-        ? `${data.value.toFixed(1)}%`
-        : `R$ ${data.value.toFixed(2)}`;
-
-      comparisonElement.textContent = data.comparisonText;
-      comparisonElement.classList.toggle('positive', !data.comparisonText.includes('-'));
-    });
-  }
-
-  private updateMonthlyBars(): void {
-    const yearData = this.yearlyData[this.selectedYear];
-    const monthBarContainers = document.querySelectorAll('.month-bar');
-
-    monthBarContainers.forEach((barContainer, index) => {
-      const monthName = this.MONTHS[index];
-      const monthData = yearData.monthlyData.find(m => m.month === monthName);
-
-      if (monthData) {
-        const barValue = barContainer.querySelector('.bar-value') as HTMLElement;
-        const monthValueElement = barContainer.querySelector('.month-value') as HTMLElement;
-
-        const maxValue = Math.max(...yearData.monthlyData.map(m => m.value));
-        const heightPercentage = (monthData.value / maxValue) * 100;
-
-        barValue.style.height = `${heightPercentage}%`;
-        monthValueElement.textContent = `R$ ${monthData.value.toFixed(2)}`;
-
-        barContainer.classList.toggle('future', index > new Date().getMonth());
-        barValue.classList.toggle('future-bar', index > new Date().getMonth());
-      }
     });
   }
 
@@ -416,16 +294,63 @@ export class CarteiraProventosComponent implements OnInit {
     );
   }
 
-  private calculatePercentageChange(oldValue: number, newValue: number): string {
-    if (oldValue === 0) return '+0%';
-    const change = ((newValue - oldValue) / oldValue) * 100;
-    return `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
+  // Criar e atualizar gráficos
+  private createPatrimonioChart(monthsToShow: number): void {
+    const ctx = this.patrimonioChartRef.nativeElement.getContext('2d');
+
+    if (this.chartInstance) {
+      this.chartInstance.destroy();
+    }
+
+    const labels = this.getChartLabels(monthsToShow);
+    const data = this.getChartData(monthsToShow);
+
+    this.chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Evolução dos Proventos',
+          data: data,
+          borderColor: '#FFA500',
+          backgroundColor: 'rgba(255, 165, 0, 0.2)',
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: this.getChartOptions()
+    });
+  }
+
+  private updatePatrimonioChart(monthsToShow: number): void {
+    if (!this.chartInstance) return;
+
+    const labels = this.getChartLabels(monthsToShow);
+    const data = this.getChartData(monthsToShow);
+
+    this.chartInstance.data.labels = labels;
+    this.chartInstance.data.datasets[0].data = data;
+    this.chartInstance.update();
+  }
+
+  private updateIncomeSummaryCards(): void {
+    // Já implementado via HTML e binding
+  }
+
+  private updateMonthlyBars(): void {
+    this.monthlyData = [...this.yearlyData[this.selectedYear].monthlyData];
   }
 
   private getChartLabels(monthsToShow: number): string[] {
     const labels: string[] = [];
+    const currentDate = new Date();
+
     for (let i = monthsToShow - 1; i >= 0; i--) {
-      const date = new Date(this.selectedChartYear, new Date().getMonth() - i, 1);
+      const date = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() - i,
+        1
+      );
       labels.push(this.getMonthYearLabel(date));
     }
     return labels;
@@ -433,14 +358,25 @@ export class CarteiraProventosComponent implements OnInit {
 
   private getChartData(monthsToShow: number): number[] {
     const data: number[] = [];
-    const yearData = this.yearlyData[this.selectedChartYear];
+    const currentDate = new Date();
 
     for (let i = monthsToShow - 1; i >= 0; i--) {
-      const date = new Date(this.selectedChartYear, new Date().getMonth() - i, 1);
+      const date = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() - i,
+        1
+      );
+
+      const year = date.getFullYear();
       const monthName = this.MONTHS[date.getMonth()];
 
-      const monthData = yearData.monthlyData.find(m => m.month === monthName);
-      data.push(monthData ? monthData.value : 0);
+      // Verificar se temos dados para este ano
+      if (this.yearlyData[year]) {
+        const monthData = this.yearlyData[year].monthlyData.find(m => m.month === monthName);
+        data.push(monthData ? monthData.value : 0);
+      } else {
+        data.push(0);
+      }
     }
 
     return data;
@@ -482,5 +418,15 @@ export class CarteiraProventosComponent implements OnInit {
         }
       }
     };
+  }
+
+  private getMonthsFromPeriodo(periodo: string): number {
+    const monthMap: { [key: string]: number } = {
+      '3 MESES': 3,
+      '6 MESES': 6,
+      '12 MESES': 12,
+      '24 MESES': 24
+    };
+    return monthMap[periodo] || 12;
   }
 }

@@ -1,0 +1,54 @@
+<div class="portfolio-selector">
+  <div class="current-portfolio" (click)="togglePortfolioDropdown()">
+    {{ selectedPortfolio }}
+    <i class="pi" [ngClass]="isDropdownOpen ? 'pi-chevron-up' : 'pi-chevron-down'"></i>
+  </div>
+
+  <div class="portfolio-dropdown" *ngIf="isDropdownOpen">
+    <div class="portfolio-list">
+      <div
+        *ngFor="let portfolio of portfolios"
+        class="portfolio-item"
+        [ngClass]="{'active': portfolio === selectedPortfolio}"
+        (click)="selectPortfolio(portfolio)">
+        {{ portfolio }}
+      </div>
+    </div>
+    <div class="add-portfolio" (click)="openNewPortfolioModal()">
+      <i class="pi pi-plus-circle"></i>
+      <span>Criar nova carteira</span>
+    </div>
+  </div>
+</div>
+
+<div class="modal" *ngIf="showNewPortfolioModal">
+  <div class="modal-backdrop" (click)="closeNewPortfolioModal()"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Criar Nova Carteira</h2>
+      <button class="close-button" (click)="closeNewPortfolioModal()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="portfolioName">Nome da Carteira</label>
+        <input
+          type="text"
+          id="portfolioName"
+          [(ngModel)]="newPortfolioName"
+          placeholder="Digite o nome da nova carteira"
+          autofocus>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeNewPortfolioModal()">Cancelar</button>
+      <button
+        class="btn-create"
+        [disabled]="!newPortfolioName.trim()"
+        (click)="createNewPortfolio()">
+        Criar
+      </button>
+    </div>
+  </div>
+</div>

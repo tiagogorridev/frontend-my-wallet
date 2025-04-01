@@ -25,6 +25,7 @@ import { InvestidorPagamentoComponent } from './features/investidor/investidor-p
 import { AdicionarAtivoComponent } from './reutilizaveis/adicionar-ativo/adicionar-ativo.component';
 import { FiltroDataComponent } from './reutilizaveis/filtro-data/filtro-data.component';
 import { FiltroTiposAtivoComponent } from './reutilizaveis/filtro-tipos-ativo/filtro-tipos-ativo.component';
+import { PortfolioSelectorComponent } from './reutilizaveis/portfolio-selector/portfolio-selector.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { FiltroTiposAtivoComponent } from './reutilizaveis/filtro-tipos-ativo/fi
     AdicionarAtivoComponent,
     FiltroDataComponent,
     FiltroTiposAtivoComponent,
+    PortfolioSelectorComponent,
   ],
   imports: [
     BrowserModule,

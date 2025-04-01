@@ -28,7 +28,6 @@ export class CarteiraMetasComponent implements OnInit {
 
   assetTypes = [
     { value: 'renda_fixa', label: 'Renda Fixa' },
-    { value: 'renda_variavel', label: 'Renda Variável' },
     { value: 'criptoativos', label: 'Criptoativos' },
     { value: 'fiis', label: 'FIIS' },
     { value: 'tesouro_direto', label: 'Tesouro Direto' }

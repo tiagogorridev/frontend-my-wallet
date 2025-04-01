@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import Chart from 'chart.js/auto';
 
 interface AssetCategory {
@@ -7,11 +6,35 @@ interface AssetCategory {
   isExpanded: boolean;
 }
 
-interface Dropdown {
+interface LegendItem {
+  class: string;
   label: string;
-  options: string[];
-  isOpen: boolean;
-  onSelect?: (option: string) => void;
+  percentage: number;
+}
+
+interface PerformanceItem {
+  periodo: string;
+  rentabilidade: string;
+  cdi: string;
+  ibovespa: string;
+  sp500: string;
+  bitcoin: string;
+}
+
+interface CryptoAsset {
+  symbol: string;
+  quantidade: number;
+  precoMedio: number;
+  precoAtual: number;
+  variacao: string;
+  rentabilidade: string;
+  saldo: number;
+  variacao24h: string;
+  variacao30d: string;
+  nota: number;
+  percentCarteira: string;
+  percentIdeal: string;
+  comprar: string;
 }
 
 @Component({
@@ -25,38 +48,125 @@ export class CarteiraGraficosComponent implements OnInit {
   @ViewChild('annualReturnChart', { static: true }) annualReturnChartRef!: ElementRef;
   @ViewChild('categoryDistributionChart', { static: true }) categoryDistributionChartRef!: ElementRef;
 
-  dropdowns: Dropdown[] = [
+  assetCategories: AssetCategory[] = [
+    { name: 'FIS', isExpanded: false },
+    { name: 'CRIPTOMOEDAS', isExpanded: false },
+    { name: 'AÇÕES', isExpanded: false },
+    { name: 'RENDA FIXA', isExpanded: false }
+  ];
+
+  assetDistributionLegend: LegendItem[] = [
+    { class: 'crypto', label: 'Criptomoedas', percentage: 50 },
+    { class: 'fixed-income', label: 'Renda Fixa', percentage: 50 }
+  ];
+
+  categoryDistributionLegend: LegendItem[] = [
+    { class: 'stocks', label: 'Ações', percentage: 30 },
+    { class: 'crypto', label: 'Criptomoedas', percentage: 40 },
+    { class: 'fixed-income', label: 'Renda Fixa', percentage: 30 }
+  ];
+
+  private fullPerformanceData: PerformanceItem[] = [
     {
-      label: '12 MESES',
-      options: ['3 MESES', '6 MESES', '12 MESES', '24 MESES'],
-      isOpen: false,
-      onSelect: (option: string) => this.updateChartMonths(option)
+      periodo: 'Janeiro 2024',
+      rentabilidade: '+2.3%',
+      cdi: '+0.8%',
+      ibovespa: '+1.5%',
+      sp500: '+2.1%',
+      bitcoin: '+5.2%'
     },
     {
-      label: 'TODOS',
-      options: ['TODOS', 'CRIPTOS', 'RENDA FIXA', 'AÇÕES'],
-      isOpen: false
+      periodo: 'Fevereiro 2024',
+      rentabilidade: '+1.7%',
+      cdi: '+0.6%',
+      ibovespa: '+1.8%',
+      sp500: '+1.9%',
+      bitcoin: '+4.5%'
     },
     {
-      label: '12 MESES',
-      options: ['3 MESES', '6 MESES', '12 MESES', '24 MESES'],
-      isOpen: false,
-      onSelect: (option: string) => this.updatePerformanceTable(option)
+      periodo: 'Janeiro 2025',
+      rentabilidade: '+1.5%',
+      cdi: '+0.7%',
+      ibovespa: '+0.9%',
+      sp500: '+1.8%',
+      bitcoin: '+6.2%'
+    },
+    {
+      periodo: 'Fevereiro 2025',
+      rentabilidade: '-1.2%',
+      cdi: '+0.7%',
+      ibovespa: '-2.1%',
+      sp500: '-1.5%',
+      bitcoin: '-3.8%'
+    },
+    {
+      periodo: 'Março 2025',
+      rentabilidade: '+1.8%',
+      cdi: '+0.8%',
+      ibovespa: '+1.2%',
+      sp500: '+1.7%',
+      bitcoin: '+7.4%'
     }
   ];
 
-  assetCategories: AssetCategory[] = [
-    { name: 'FIS', isExpanded: false },
-    { name: 'CRIPTOMOEDAS', isExpanded: false }
+  performanceTableData: PerformanceItem[] = [];
+
+  cryptoAssets: CryptoAsset[] = [
+    {
+      symbol: 'BTC',
+      quantidade: 0.05,
+      precoMedio: 78500,
+      precoAtual: 80000,
+      variacao: '+1.91%',
+      rentabilidade: '+1.91%',
+      saldo: 4000,
+      variacao24h: '+2.3%',
+      variacao30d: '+15.7%',
+      nota: 9,
+      percentCarteira: '40.00%',
+      percentIdeal: '30.00%',
+      comprar: 'NÃO'
+    },
+    {
+      symbol: 'ETH',
+      quantidade: 0.5,
+      precoMedio: 4120,
+      precoAtual: 4000,
+      variacao: '-2.91%',
+      rentabilidade: '-2.91%',
+      saldo: 2000,
+      variacao24h: '-1.2%',
+      variacao30d: '+5.4%',
+      nota: 8,
+      percentCarteira: '20.00%',
+      percentIdeal: '15.00%',
+      comprar: 'SIM'
+    },
+    {
+      symbol: 'UNI',
+      quantidade: 20,
+      precoMedio: 50,
+      precoAtual: 45,
+      variacao: '-10.00%',
+      rentabilidade: '-10.00%',
+      saldo: 900,
+      variacao24h: '-2.50%',
+      variacao30d: '-8.70%',
+      nota: 7,
+      percentCarteira: '9.00%',
+      percentIdeal: '5.00%',
+      comprar: 'NÃO'
+    }
   ];
 
   private chartInstances: { [key: string]: Chart } = {};
   private readonly months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
-  constructor(private fb: FormBuilder) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.initializeCharts();
+    this.updatePerformanceTable('12 MESES');
   }
 
   private initializeCharts(): void {
@@ -64,23 +174,6 @@ export class CarteiraGraficosComponent implements OnInit {
     this.createAssetsDistributionChart();
     this.createAnnualReturnChart();
     this.createCategoryDistributionChart();
-  }
-
-  @HostListener('document:click')
-  onDocumentClick(): void {
-    this.dropdowns.forEach(dropdown => dropdown.isOpen = false);
-  }
-
-  toggleDropdown(dropdown: Dropdown): void {
-    dropdown.isOpen = !dropdown.isOpen;
-  }
-
-  selectOption(dropdown: Dropdown, option: string): void {
-    dropdown.label = option;
-    dropdown.isOpen = false;
-    if (dropdown.onSelect) {
-      dropdown.onSelect(option);
-    }
   }
 
   toggleCategoryExpansion(category: AssetCategory): void {
@@ -105,11 +198,32 @@ export class CarteiraGraficosComponent implements OnInit {
   }
 
   updatePerformanceTable(timeframe: string): void {
-    console.log(`Performance table filtered by: ${timeframe}`);
+    const monthsMap: { [key: string]: number } = {
+      '3 MESES': 3,
+      '6 MESES': 6,
+      '12 MESES': 12,
+      '24 MESES': 24
+    };
+
+    const monthsToShow = monthsMap[timeframe] || 12;
+
+    this.performanceTableData = this.fullPerformanceData
+      .slice(-monthsToShow);
+
+    console.log(`Performance table filtered by: ${timeframe} - showing ${monthsToShow} months`);
   }
 
   onAssetAdded(assetData: any) {
     console.log('Novo ativo adicionado:', assetData);
+  }
+
+  getValueClass(value: string): string {
+    if (value.startsWith('+')) {
+      return 'positive';
+    } else if (value.startsWith('-')) {
+      return 'negative';
+    }
+    return '';
   }
 
   private getMonthYearLabel(date: Date): string {
@@ -175,9 +289,9 @@ export class CarteiraGraficosComponent implements OnInit {
     this.chartInstances['assets'] = new Chart(ctx, {
       type: 'pie',
       data: {
-        labels: ['Criptomoedas', 'Renda Fixa'],
+        labels: this.assetDistributionLegend.map(item => item.label),
         datasets: [{
-          data: [50, 50],
+          data: this.assetDistributionLegend.map(item => item.percentage),
           backgroundColor: ['#FFA500', '#6b7280'],
           hoverOffset: 4
         }]
@@ -193,7 +307,7 @@ export class CarteiraGraficosComponent implements OnInit {
       data: {
         labels: this.months,
         datasets: [{
-          label: 'Rentabilidade 2024',
+          label: 'Rentabilidade 2025',
           data: [2.5, -1.2, 3.8, 1.5, 2.1, -0.8, 4.2, 1.9, 2.7, 3.1, -1.5, 2.9],
           backgroundColor: '#FFA500',
           borderRadius: 4
@@ -208,9 +322,9 @@ export class CarteiraGraficosComponent implements OnInit {
     this.chartInstances['category'] = new Chart(ctx, {
       type: 'pie',
       data: {
-        labels: ['Ações', 'Criptomoedas', 'Renda Fixa'],
+        labels: this.categoryDistributionLegend.map(item => item.label),
         datasets: [{
-          data: [30, 40, 30],
+          data: this.categoryDistributionLegend.map(item => item.percentage),
           backgroundColor: ['#22C55E', '#FFA500', '#6b7280'],
           hoverOffset: 4
         }]

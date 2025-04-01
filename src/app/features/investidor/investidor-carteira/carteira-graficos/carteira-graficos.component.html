@@ -6,35 +6,11 @@
       <div class="section-header">
         <h2>Evolução do Patrimônio</h2>
         <div class="filters">
-          <div class="filter-dropdown" (click)="$event.stopPropagation()">
-            <div class="dropdown-trigger" (click)="toggleDropdown(dropdowns[0])">
-              <span>{{ dropdowns[0].label }}</span>
-              <span class="dropdown-icon">▼</span>
-            </div>
-            <ul class="dropdown-menu" *ngIf="dropdowns[0].isOpen">
-              <li
-                *ngFor="let option of dropdowns[0].options"
-                (click)="selectOption(dropdowns[0], option)"
-              >
-                {{ option }}
-              </li>
-            </ul>
-          </div>
-
-          <div class="filter-dropdown" (click)="$event.stopPropagation()">
-            <div class="dropdown-trigger" (click)="toggleDropdown(dropdowns[1])">
-              <span>{{ dropdowns[1].label }}</span>
-              <span class="dropdown-icon">▼</span>
-            </div>
-            <ul class="dropdown-menu" *ngIf="dropdowns[1].isOpen">
-              <li
-                *ngFor="let option of dropdowns[1].options"
-                (click)="selectOption(dropdowns[1], option)"
-              >
-                {{ option }}
-              </li>
-            </ul>
-          </div>
+          <app-filtro-data
+            [options]="['3 MESES', '6 MESES', '12 MESES', '24 MESES']"
+            [initialOption]="'12 MESES'"
+            (optionSelected)="updateChartMonths($event)">
+          </app-filtro-data>
         </div>
       </div>
       <div class="chart-container">
@@ -49,13 +25,9 @@
       <div class="pie-chart-container">
         <canvas #assetsDistributionChart></canvas>
         <div class="pie-chart-legend">
-          <div class="legend-item">
-            <span class="legend-color crypto"></span>
-            <span class="legend-label">50% Criptomoedas</span>
-          </div>
-          <div class="legend-item">
-            <span class="legend-color fixed-income"></span>
-            <span class="legend-label">50% Renda Fixa</span>
+          <div class="legend-item" *ngFor="let item of assetDistributionLegend">
+            <span class="legend-color" [ngClass]="item.class"></span>
+            <span class="legend-label">{{item.percentage}}% {{item.label}}</span>
           </div>
         </div>
       </div>
@@ -79,17 +51,9 @@
       <div class="pie-chart-container">
         <canvas #categoryDistributionChart></canvas>
         <div class="pie-chart-legend">
-          <div class="legend-item">
-            <span class="legend-color stocks"></span>
-            <span class="legend-label">30% Ações</span>
-          </div>
-          <div class="legend-item">
-            <span class="legend-color crypto"></span>
-            <span class="legend-label">40% Criptomoedas</span>
-          </div>
-          <div class="legend-item">
-            <span class="legend-color fixed-income"></span>
-            <span class="legend-label">30% Renda Fixa</span>
+          <div class="legend-item" *ngFor="let item of categoryDistributionLegend">
+            <span class="legend-color" [ngClass]="item.class"></span>
+            <span class="legend-label">{{item.percentage}}% {{item.label}}</span>
           </div>
         </div>
       </div>
@@ -100,20 +64,11 @@
     <div class="section-header">
       <h2>Histórico de Performance</h2>
       <div class="filters">
-        <div class="filter-dropdown" (click)="$event.stopPropagation()">
-          <div class="dropdown-trigger" (click)="toggleDropdown(dropdowns[2])">
-            <span>{{ dropdowns[2].label }}</span>
-            <span class="dropdown-icon">▼</span>
-          </div>
-          <ul class="dropdown-menu" *ngIf="dropdowns[2].isOpen">
-            <li
-              *ngFor="let option of dropdowns[2].options"
-              (click)="selectOption(dropdowns[2], option)"
-            >
-              {{ option }}
-            </li>
-          </ul>
-        </div>
+        <app-filtro-data
+          [options]="['3 MESES', '6 MESES', '12 MESES', '24 MESES']"
+          [initialOption]="'12 MESES'"
+          (optionSelected)="updatePerformanceTable($event)">
+        </app-filtro-data>
       </div>
     </div>
 
@@ -130,29 +85,13 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Janeiro 2025</td>
-            <td class="positive">+2.3%</td>
-            <td>+0.8%</td>
-            <td class="positive">+1.5%</td>
-            <td class="positive">+2.1%</td>
-            <td class="positive">+5.2%</td>
-          </tr>
-          <tr>
-            <td>Fevereiro 2025</td>
-            <td class="negative">-1.2%</td>
-            <td>+0.7%</td>
-            <td class="negative">-2.1%</td>
-            <td class="negative">-1.5%</td>
-            <td class="negative">-3.8%</td>
-          </tr>
-          <tr>
-            <td>Março 2023</td>
-            <td class="positive">+1.8%</td>
-            <td>+0.8%</td>
-            <td class="positive">+1.2%</td>
-            <td class="positive">+1.7%</td>
-            <td class="positive">+7.4%</td>
+          <tr *ngFor="let item of performanceTableData">
+            <td>{{item.periodo}}</td>
+            <td [ngClass]="getValueClass(item.rentabilidade)">{{item.rentabilidade}}</td>
+            <td>{{item.cdi}}</td>
+            <td [ngClass]="getValueClass(item.ibovespa)">{{item.ibovespa}}</td>
+            <td [ngClass]="getValueClass(item.sp500)">{{item.sp500}}</td>
+            <td [ngClass]="getValueClass(item.bitcoin)">{{item.bitcoin}}</td>
           </tr>
         </tbody>
       </table>
@@ -161,9 +100,9 @@
 
   <section class="assets-section">
     <app-adicionar-ativo
-    [modalTitle]="'Adicionar Novo Ativo'"
-    (assetAdded)="onAssetAdded($event)">
-  </app-adicionar-ativo>
+      [modalTitle]="'Adicionar Novo Ativo'"
+      (assetAdded)="onAssetAdded($event)">
+    </app-adicionar-ativo>
 
     <div class="assets-table-container">
       <div
@@ -262,65 +201,25 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr *ngFor="let asset of cryptoAssets">
                 <td class="asset-name">
                   <div class="asset-icon crypto"></div>
-                  BTC
+                  {{asset.symbol}}
                 </td>
-                <td>0,05</td>
-                <td>R$ 78.500,00</td>
-                <td>R$ 80.000,00</td>
-                <td class="positive">+1,91%</td>
-                <td class="positive">+1,91%</td>
-                <td>R$ 4.000,00</td>
-                <td class="positive">+2,3%</td>
-                <td class="positive">+15,7%</td>
+                <td>{{asset.quantidade}}</td>
+                <td>{{asset.precoMedio | currency:'BRL'}}</td>
+                <td>{{asset.precoAtual | currency:'BRL'}}</td>
+                <td [ngClass]="getValueClass(asset.variacao)">{{asset.variacao}}</td>
+                <td [ngClass]="getValueClass(asset.rentabilidade)">{{asset.rentabilidade}}</td>
+                <td>{{asset.saldo | currency:'BRL'}}</td>
+                <td [ngClass]="getValueClass(asset.variacao24h)">{{asset.variacao24h}}</td>
+                <td [ngClass]="getValueClass(asset.variacao30d)">{{asset.variacao30d}}</td>
                 <td>
-                  <div class="rating">9</div>
+                  <div class="rating">{{asset.nota}}</div>
                 </td>
-                <td>40,00%</td>
-                <td>30,00%</td>
-                <td class="buy-status">NÃO</td>
-              </tr>
-              <tr>
-                <td class="asset-name">
-                  <div class="asset-icon crypto"></div>
-                  ETH
-                </td>
-                <td>0,5</td>
-                <td>R$ 4.120,00</td>
-                <td>R$ 4.000,00</td>
-                <td class="negative">-2,91%</td>
-                <td class="negative">-2,91%</td>
-                <td>R$ 2.000,00</td>
-                <td class="negative">-1,2%</td>
-                <td class="positive">+5,4%</td>
-                <td>
-                  <div class="rating">8</div>
-                </td>
-                <td>20,00%</td>
-                <td>15,00%</td>
-                <td class="buy-status">SIM</td>
-              </tr>
-              <tr>
-                <td class="asset-name">
-                  <div class="asset-icon crypto"></div>
-                  UNI
-                </td>
-                <td>20,00</td>
-                <td>R$ 50,00</td>
-                <td>R$ 45,00</td>
-                <td class="negative">-10,00%</td>
-                <td class="negative">-10,00%</td>
-                <td>R$ 900</td>
-                <td class="negative">-2,50%</td>
-                <td class="negative">-8,70%</td>
-                <td>
-                  <div class="rating">7</div>
-                </td>
-                <td>9,00%</td>
-                <td>5,00%</td>
-                <td class="buy-status">NÃO</td>
+                <td>{{asset.percentCarteira}}</td>
+                <td>{{asset.percentIdeal}}</td>
+                <td class="buy-status">{{asset.comprar}}</td>
               </tr>
             </tbody>
           </table>

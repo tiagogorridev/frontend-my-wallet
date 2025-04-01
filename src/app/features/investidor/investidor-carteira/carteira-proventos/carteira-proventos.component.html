@@ -5,35 +5,10 @@
       <div class="section-header">
         <h2>Evolução dos Proventos</h2>
         <div class="filters">
-          <div class="filter-dropdown" (click)="$event.stopPropagation()">
-            <div class="dropdown-trigger" (click)="toggleDropdown(dropdowns[0])">
-              <span>{{ dropdowns[0].label }}</span>
-              <span class="dropdown-icon">▼</span>
-            </div>
-            <ul class="dropdown-menu" *ngIf="dropdowns[0].isOpen">
-              <li
-                *ngFor="let option of dropdowns[0].options"
-                (click)="selectOption(dropdowns[0], option)"
-              >
-                {{ option }}
-              </li>
-            </ul>
-          </div>
-
-          <div class="filter-dropdown" (click)="$event.stopPropagation()">
-            <div class="dropdown-trigger" (click)="toggleDropdown(dropdowns[1])">
-              <span>{{ dropdowns[1].label }}</span>
-              <span class="dropdown-icon">▼</span>
-            </div>
-            <ul class="dropdown-menu" *ngIf="dropdowns[1].isOpen">
-              <li
-                *ngFor="let option of dropdowns[1].options"
-                (click)="selectOption(dropdowns[1], option)"
-              >
-                {{ option }}
-              </li>
-            </ul>
-          </div>
+          <app-filtro-data
+            [initialOption]="selectedPeriodo"
+            (optionSelected)="onPeriodoSelected($event)">
+          </app-filtro-data>
         </div>
       </div>
 
@@ -57,111 +32,42 @@
       <div class="summary-cards">
         <div class="summary-card">
           <div class="card-title">Total Recebido</div>
-          <div class="card-value">R$ 1.345,25</div>
-          <div class="card-comparison positive">+12,5% vs 2024</div>
+          <div class="card-value">R$ {{ yearlyData[selectedYear].totalReceived.toFixed(2) }}</div>
+          <div class="card-comparison" [ngClass]="getComparisonClass(yearlyData[selectedYear].totalReceived, yearlyData[selectedYear-1].totalReceived)">
+            {{ calculatePercentageChange(yearlyData[selectedYear-1].totalReceived, yearlyData[selectedYear].totalReceived) }}
+          </div>
         </div>
         <div class="summary-card">
           <div class="card-title">Média Mensal</div>
-          <div class="card-value">R$ 224,20</div>
-          <div class="card-comparison positive">+8,2% vs 2024</div>
+          <div class="card-value">R$ {{ yearlyData[selectedYear].monthlyAverage.toFixed(2) }}</div>
+          <div class="card-comparison" [ngClass]="getComparisonClass(yearlyData[selectedYear].monthlyAverage, yearlyData[selectedYear-1].monthlyAverage)">
+            {{ calculatePercentageChange(yearlyData[selectedYear-1].monthlyAverage, yearlyData[selectedYear].monthlyAverage) }}
+          </div>
         </div>
         <div class="summary-card">
           <div class="card-title">Yield</div>
-          <div class="card-value">4,3%</div>
-          <div class="card-comparison positive">+0,5% vs 2024</div>
+          <div class="card-value">{{ yearlyData[selectedYear].yield.toFixed(1) }}%</div>
+          <div class="card-comparison" [ngClass]="getComparisonClass(yearlyData[selectedYear].yield, yearlyData[selectedYear-1].yield)">
+            {{ calculatePercentageChange(yearlyData[selectedYear-1].yield, yearlyData[selectedYear].yield) }}
+          </div>
         </div>
         <div class="summary-card">
           <div class="card-title">Projeção Anual</div>
-          <div class="card-value">R$ 2.690,50</div>
-          <div class="card-comparison positive">+15,3% vs 2024</div>
+          <div class="card-value">R$ {{ yearlyData[selectedYear].annualProjection.toFixed(2) }}</div>
+          <div class="card-comparison" [ngClass]="getComparisonClass(yearlyData[selectedYear].annualProjection, yearlyData[selectedYear-1].annualProjection)">
+            {{ calculatePercentageChange(yearlyData[selectedYear-1].annualProjection, yearlyData[selectedYear].annualProjection) }}
+          </div>
         </div>
       </div>
 
       <div class="monthly-chart-container">
         <div class="monthly-distribution-bars">
-          <div class="month-bar">
+          <div class="month-bar" *ngFor="let month of monthlyData; let i = index" [ngClass]="{'future': isFutureMonth(i)}">
             <div class="bar-container">
-              <div class="bar-value" style="height: 60%"></div>
+              <div class="bar-value" [ngClass]="{'future-bar': isFutureMonth(i)}" [style.height.%]="getBarHeight(month.value)"></div>
             </div>
-            <div class="month-value">R$ 145,20</div>
-            <div class="month-name">Jan / {{ selectedYear }}</div>
-          </div>
-          <div class="month-bar future">
-            <div class="bar-container">
-              <div class="bar-value future-bar" style="height: 65%"></div>
-            </div>
-            <div class="month-value">R$ 165,20</div>
-            <div class="month-name">Fev / {{ selectedYear }}</div>
-          </div>
-          <div class="month-bar">
-            <div class="bar-container">
-              <div class="bar-value" style="height: 100%"></div>
-            </div>
-            <div class="month-value">R$ 320,75</div>
-            <div class="month-name">Mar / {{ selectedYear }}</div>
-          </div>
-          <div class="month-bar">
-            <div class="bar-container">
-              <div class="bar-value" style="height: 30%"></div>
-            </div>
-            <div class="month-value">R$ 95,30</div>
-            <div class="month-name">Abr / {{ selectedYear }}</div>
-          </div>
-          <div class="month-bar">
-            <div class="bar-container">
-              <div class="bar-value" style="height: 50%"></div>
-            </div>
-            <div class="month-value">R$ 125,80</div>
-            <div class="month-name">Mai / {{ selectedYear }}</div>
-          </div>
-          <div class="month-bar">
-            <div class="bar-container">
-              <div class="bar-value" style="height: 70%"></div>
-            </div>
-            <div class="month-value">R$ 175,40</div>
-            <div class="month-name">Jun / {{ selectedYear }}</div>
-          </div>
-          <div class="month-bar future">
-            <div class="bar-container">
-              <div class="bar-value future-bar" style="height: 65%"></div>
-            </div>
-            <div class="month-value">R$ 165,20</div>
-            <div class="month-name">Jul / {{ selectedYear }}</div>
-          </div>
-          <div class="month-bar future">
-            <div class="bar-container">
-              <div class="bar-value future-bar" style="height: 85%"></div>
-            </div>
-            <div class="month-value">R$ 220,80</div>
-            <div class="month-name">Ago / {{ selectedYear }}</div>
-          </div>
-          <div class="month-bar future">
-            <div class="bar-container">
-              <div class="bar-value future-bar" style="height: 45%"></div>
-            </div>
-            <div class="month-value">R$ 115,60</div>
-            <div class="month-name">Set / {{ selectedYear }}</div>
-          </div>
-          <div class="month-bar future">
-            <div class="bar-container">
-              <div class="bar-value future-bar" style="height: 75%"></div>
-            </div>
-            <div class="month-value">R$ 190,50</div>
-            <div class="month-name">Out / {{ selectedYear }}</div>
-          </div>
-          <div class="month-bar future">
-            <div class="bar-container">
-              <div class="bar-value future-bar" style="height: 90%"></div>
-            </div>
-            <div class="month-value">R$ 240,20</div>
-            <div class="month-name">Nov / {{ selectedYear }}</div>
-          </div>
-          <div class="month-bar future">
-            <div class="bar-container">
-              <div class="bar-value future-bar" style="height: 95%"></div>
-            </div>
-            <div class="month-value">R$ 300,10</div>
-            <div class="month-name">Dez / {{ selectedYear }}</div>
+            <div class="month-value">R$ {{ month.value.toFixed(2) }}</div>
+            <div class="month-name">{{ month.month }} / {{ selectedYear }}</div>
           </div>
         </div>
       </div>
@@ -172,35 +78,16 @@
     <div class="section-header">
       <h2>Proventos Recebidos</h2>
       <div class="filters">
-        <div class="filter-dropdown" (click)="$event.stopPropagation()">
-          <div class="dropdown-trigger" (click)="toggleIncomeDetailsDropdown(incomeDetailsDropdowns[0])">
-            <span>{{ incomeDetailsDropdowns[0].label }}</span>
-            <span class="dropdown-icon">▼</span>
-          </div>
-          <ul class="dropdown-menu" *ngIf="incomeDetailsDropdowns[0].isOpen">
-            <li
-              *ngFor="let option of incomeDetailsDropdowns[0].options"
-              (click)="selectIncomeDetailsOption(incomeDetailsDropdowns[0], option)"
-            >
-              {{ option }}
-            </li>
-          </ul>
-        </div>
+        <app-filtro-data
+          [initialOption]="selectedDetalhePeriodo"
+          (optionSelected)="onDetalhePeriodoSelected($event)">
+        </app-filtro-data>
 
-        <div class="filter-dropdown" (click)="$event.stopPropagation()">
-          <div class="dropdown-trigger" (click)="toggleIncomeDetailsDropdown(incomeDetailsDropdowns[1])">
-            <span>{{ incomeDetailsDropdowns[1].label }}</span>
-            <span class="dropdown-icon">▼</span>
-          </div>
-          <ul class="dropdown-menu" *ngIf="incomeDetailsDropdowns[1].isOpen">
-            <li
-              *ngFor="let option of incomeDetailsDropdowns[1].options"
-              (click)="selectIncomeDetailsOption(incomeDetailsDropdowns[1], option)"
-            >
-              {{ option }}
-            </li>
-          </ul>
-        </div>
+        <app-filtro-tipos-ativo
+          [options]="tiposDetalheOptions"
+          [initialOption]="selectedDetalheTipo"
+          (optionSelected)="onDetalheTipoSelected($event)">
+        </app-filtro-tipos-ativo>
       </div>
     </div>
 

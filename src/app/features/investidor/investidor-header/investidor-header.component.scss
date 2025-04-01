@@ -66,28 +66,6 @@
   }
 }
 
-.portfolio-selector {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-right: 20px;
-}
-
-.current-portfolio {
-  display: flex;
-  align-items: center;
-  font-weight: 600;
-  color: $white;
-  position: relative;
-
-  &:after {
-    content: '▼';
-    font-size: 10px;
-    margin-left: 5px;
-    color: $ambar;
-  }
-}
-
 .add-asset-btn {
   display: flex;
   align-items: center;
@@ -166,5 +144,93 @@
   &.active {
     color: $ambar;
     border-bottom: 2px solid $ambar;
+  }
+}
+.portfolio-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: 20px;
+  position: relative;
+}
+
+.current-portfolio {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: $white;
+  cursor: pointer;
+  padding: 5px 0;
+
+  i {
+    font-size: 12px;
+    margin-left: 5px;
+    color: $ambar;
+  }
+}
+
+.portfolio-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 220px;
+  background-color: $dark-lightest;
+  border: 1px solid $gray;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  margin-top: 5px;
+  overflow: hidden;
+}
+
+.portfolio-list {
+  max-height: 200px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $ambar;
+    border-radius: 4px;
+  }
+}
+
+.portfolio-item {
+  padding: 10px 15px;
+  color: $white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: $dark-lighter;
+  }
+
+  &.active {
+    color: $ambar;
+    font-weight: 600;
+    background-color: rgba($ambar, 0.1);
+  }
+}
+
+.add-portfolio {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  border-top: 1px solid $dark-lighter;
+  color: $ambar;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  i {
+    margin-right: 8px;
+    font-size: 16px;
+  }
+
+  &:hover {
+    background-color: $dark-lighter;
   }
 }
