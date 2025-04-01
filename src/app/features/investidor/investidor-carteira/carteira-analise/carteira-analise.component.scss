@@ -50,21 +50,6 @@
       background-color: darken($ambar, 10%);
     }
   }
-
-  .demo-btn {
-    background-color: transparent;
-    color: $ambar;
-    border: 1px solid $ambar;
-    border-radius: 4px;
-    padding: 12px 24px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-
-    &:hover {
-      background-color: rgba($ambar, 0.1);
-    }
-  }
 }
 
 .main-content {
@@ -97,7 +82,6 @@
   }
 }
 
-// Benefits Section
 .benefits-section {
   padding: 20px;
   background-color: $dark-lighter;
@@ -157,7 +141,6 @@
   }
 }
 
-// Example Analysis Section
 .example-analysis {
   padding: 20px;
   background-color: $dark-lighter;
@@ -271,7 +254,6 @@
   }
 }
 
-// Plans Section
 .plans-section {
   padding: 20px;
   background-color: $dark-lighter;
@@ -402,7 +384,6 @@
   }
 }
 
-// Testimonials Section
 .testimonials-section {
   padding: 20px;
   background-color: $dark-lighter;
@@ -485,7 +466,6 @@
   color: $light-gray;
 }
 
-// CTA Section
 .cta-section {
   margin: 40px 20px;
   background-color: $dark-lighter;
@@ -528,7 +508,6 @@
   }
 }
 
-// Responsive adjustments
 @media (max-width: 768px) {
   .analysis-header {
     flex-direction: column;
