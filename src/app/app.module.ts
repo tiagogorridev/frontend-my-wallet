@@ -21,6 +21,7 @@ import { CadastroComponent } from './features/pages/cadastro/cadastro.component'
 import { ButtonModule } from 'primeng/button';
 import { CarteiraAnaliseComponent } from './features/investidor/investidor-carteira/carteira-analise/carteira-analise.component';
 import { InvestidorHeaderComponent } from './features/investidor/investidor-header/investidor-header.component';
+import { InvestidorPagamentoComponent } from './features/investidor/investidor-pagamento/investidor-pagamento.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { InvestidorHeaderComponent } from './features/investidor/investidor-head
     CadastroComponent,
     CarteiraAnaliseComponent,
     InvestidorHeaderComponent,
+    InvestidorPagamentoComponent,
   ],
   imports: [
     BrowserModule,
