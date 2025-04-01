@@ -193,7 +193,6 @@
   margin-bottom: 12px;
   overflow: hidden;
 
-  // Explicitly handle expanded state
   &.expanded .category-content {
     display: block;
   }
@@ -350,7 +349,6 @@
   gap: 45px;
 }
 
-// Modal
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -410,8 +408,9 @@
   }
 
   .form-control {
-    width: 90%;
+    width: 100%;
     padding: 10px;
+    box-sizing: border-box;
     background-color: $dark;
     border: 1px solid $dark-lightest;
     border-radius: 4px;
