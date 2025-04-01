@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import Chart from 'chart.js/auto';
 
 interface AssetCategory {
@@ -16,26 +16,13 @@ export class CarteiraResumoComponent implements OnInit {
   @ViewChild('patrimonioChart', { static: true }) patrimonioChartRef!: ElementRef;
   @ViewChild('assetsDistributionChart', { static: true }) assetsDistributionChartRef!: ElementRef;
 
-  dropdowns = [
-    {
-      label: '12 MESES',
-      options: ['3 MESES', '6 MESES', '12 MESES', '24 MESES'],
-      isOpen: false,
-      onSelect: (option: string) => this.updateChartMonths(option)
-    },
-    {
-      label: 'TODOS',
-      options: ['TODOS', 'CRIPTOS', 'RENDA FIXA', 'AÇÕES'],
-      isOpen: false
-    }
-  ];
-
   assetCategories: AssetCategory[] = [
     { name: 'FIIS', isExpanded: false },
     { name: 'CRIPTOMOEDAS', isExpanded: false }
   ];
 
   private chartInstance: Chart | null = null;
+  private pieChartInstance: Chart | null = null;
 
   constructor(private fb: FormBuilder) {}
 
@@ -48,28 +35,13 @@ export class CarteiraResumoComponent implements OnInit {
     console.log('Novo ativo adicionado:', assetData);
   }
 
-  toggleDropdown(dropdown: any) {
-    this.dropdowns.forEach(dd => {
-      if (dd !== dropdown) {
-        dd.isOpen = false;
-      }
-    });
-
-    dropdown.isOpen = !dropdown.isOpen;
+  onPeriodoSelected(option: string) {
+    this.updateChartByPeriod(option);
   }
 
-  selectOption(dropdown: any, option: string) {
-    dropdown.label = option;
-    dropdown.isOpen = false;
-
-    if (dropdown.onSelect) {
-      dropdown.onSelect(option);
-    }
-  }
-
-  updateChartMonths(monthOption: string) {
+  updateChartByPeriod(periodOption: string) {
     let monthsToShow: number;
-    switch(monthOption) {
+    switch(periodOption) {
       case '3 MESES':
         monthsToShow = 3;
         break;
@@ -168,7 +140,7 @@ export class CarteiraResumoComponent implements OnInit {
 
   createAssetsDistributionChart() {
     const ctx = this.assetsDistributionChartRef.nativeElement.getContext('2d');
-    new Chart(ctx, {
+    this.pieChartInstance = new Chart(ctx, {
       type: 'pie',
       data: {
         labels: ['Criptomoedas', 'Renda Fixa'],
@@ -198,6 +170,7 @@ export class CarteiraResumoComponent implements OnInit {
 
     category.isExpanded = !category.isExpanded;
   }
+
   private getMonthYearLabel(date: Date): string {
     const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
     return `${months[date.getMonth()]} / ${date.getFullYear()}`;

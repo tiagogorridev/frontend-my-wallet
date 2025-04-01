@@ -23,6 +23,8 @@ import { CarteiraAnaliseComponent } from './features/investidor/investidor-carte
 import { InvestidorHeaderComponent } from './features/investidor/investidor-header/investidor-header.component';
 import { InvestidorPagamentoComponent } from './features/investidor/investidor-pagamento/investidor-pagamento.component';
 import { AdicionarAtivoComponent } from './reutilizaveis/adicionar-ativo/adicionar-ativo.component';
+import { FiltroDataComponent } from './reutilizaveis/filtro-data/filtro-data.component';
+import { FiltroTiposAtivoComponent } from './reutilizaveis/filtro-tipos-ativo/filtro-tipos-ativo.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +45,8 @@ import { AdicionarAtivoComponent } from './reutilizaveis/adicionar-ativo/adicion
     InvestidorHeaderComponent,
     InvestidorPagamentoComponent,
     AdicionarAtivoComponent,
+    FiltroDataComponent,
+    FiltroTiposAtivoComponent,
   ],
   imports: [
     BrowserModule,

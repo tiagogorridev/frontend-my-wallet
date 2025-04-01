@@ -192,6 +192,7 @@ export class CarteiraProventosComponent implements OnInit {
     this.filteredIncomeData = [...this.incomeData];
   }
 
+
   toggleDropdown(dropdown: DropdownOption): void {
     this.dropdowns.forEach(dd => {
       if (dd !== dropdown) dd.isOpen = false;
@@ -277,6 +278,8 @@ export class CarteiraProventosComponent implements OnInit {
       dropdown.isOpen = false;
     });
   }
+
+
 
   private createPatrimonioChart(monthsToShow: number): void {
     const ctx = this.patrimonioChartRef.nativeElement.getContext('2d');

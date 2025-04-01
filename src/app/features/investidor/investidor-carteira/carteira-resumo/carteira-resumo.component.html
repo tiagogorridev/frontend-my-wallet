@@ -5,35 +5,10 @@
       <div class="section-header">
         <h2>Evolução do Patrimônio</h2>
         <div class="filters">
-          <div class="filter-dropdown" (click)="$event.stopPropagation()">
-            <div class="dropdown-trigger" (click)="toggleDropdown(dropdowns[0])">
-              <span>{{ dropdowns[0].label }}</span>
-              <span class="dropdown-icon">▼</span>
-            </div>
-            <ul class="dropdown-menu" *ngIf="dropdowns[0].isOpen">
-              <li
-                *ngFor="let option of dropdowns[0].options"
-                (click)="selectOption(dropdowns[0], option)"
-              >
-                {{ option }}
-              </li>
-            </ul>
-          </div>
-
-          <div class="filter-dropdown" (click)="$event.stopPropagation()">
-            <div class="dropdown-trigger" (click)="toggleDropdown(dropdowns[1])">
-              <span>{{ dropdowns[1].label }}</span>
-              <span class="dropdown-icon">▼</span>
-            </div>
-            <ul class="dropdown-menu" *ngIf="dropdowns[1].isOpen">
-              <li
-                *ngFor="let option of dropdowns[1].options"
-                (click)="selectOption(dropdowns[1], option)"
-              >
-                {{ option }}
-              </li>
-            </ul>
-          </div>
+          <app-filtro-data
+            [initialOption]="'12 MESES'"
+            (optionSelected)="onPeriodoSelected($event)">
+          </app-filtro-data>
         </div>
       </div>
       <div class="chart-container">
@@ -63,9 +38,9 @@
 
   <section class="assets-section">
     <app-adicionar-ativo
-    [modalTitle]="'Adicionar Novo Ativo'"
-    (assetAdded)="onAssetAdded($event)">
-  </app-adicionar-ativo>
+      [modalTitle]="'Adicionar Novo Ativo'"
+      (assetAdded)="onAssetAdded($event)">
+    </app-adicionar-ativo>
 
     <div class="assets-table-container">
       <div

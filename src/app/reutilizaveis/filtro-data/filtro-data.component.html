@@ -1,0 +1,11 @@
+<div class="filter-dropdown" (click)="$event.stopPropagation()">
+  <div class="dropdown-trigger" (click)="toggleDropdown()">
+    <span>{{ selectedOption }}</span>
+    <span class="dropdown-icon">▼</span>
+  </div>
+  <ul class="dropdown-menu" *ngIf="isOpen">
+    <li *ngFor="let option of options" (click)="selectOption(option)">
+      {{ option }}
+    </li>
+  </ul>
+</div>

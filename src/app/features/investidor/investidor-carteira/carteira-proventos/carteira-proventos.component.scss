@@ -379,9 +379,9 @@
   border-radius: 4px;
   font-size: 12px;
   display: inline-block;
-  text-align: center; // Center the text horizontally
-  min-width: 80px; // Ensure consistent width
-  line-height: 1.4; // Consistent vertical alignment
+  text-align: center;
+  min-width: 80px;
+  line-height: 1.4;
 
   &.dividend {
     background-color: rgba($green, 0.2);
@@ -393,8 +393,6 @@
     color: $blue;
   }
 }
-
-// Add these styles to your existing SCSS
 
 .rendimento-value {
   margin-right: 5px;

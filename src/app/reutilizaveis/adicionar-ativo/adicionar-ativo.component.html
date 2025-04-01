@@ -1,8 +1,6 @@
 <div class="add-asset-container">
-  <!-- Botão para abrir o modal -->
   <button class="add-asset-btn-secondary" (click)="openModal()">Adicionar Ativo +</button>
 
-  <!-- Modal para adicionar ativo -->
   <div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
     <div class="modal-container" (click)="$event.stopPropagation()">
       <div class="modal-header">
