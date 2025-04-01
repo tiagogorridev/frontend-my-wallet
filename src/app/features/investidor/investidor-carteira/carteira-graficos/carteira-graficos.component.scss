@@ -1,6 +1,5 @@
 @import 'variables';
 
-// General styles
 * {
   margin: 0;
   padding: 0;
@@ -16,7 +15,6 @@
   color: $white;
 }
 
-// Header styles
 .header-summary {
   display: flex;
   justify-content: space-between;
@@ -126,7 +124,6 @@
   }
 }
 
-// Navigation
 .navigation {
   display: flex;
   background-color: $dark-lighter;
@@ -173,7 +170,6 @@
   }
 }
 
-// Main content
 .main-content {
   display: flex;
   gap: 20px;
@@ -343,7 +339,6 @@
   width: calc(100% - 20px);
 }
 
-// Performance metrics section
 .performance-metrics {
   display: flex;
   gap: 20px;
@@ -367,11 +362,12 @@
   margin-bottom: 15px;
 }
 
-.performance-chart, .comparison-chart, .category-chart {
+.performance-chart,
+.comparison-chart,
+.category-chart {
   height: 200px;
 }
 
-// Historical performance
 .historical-performance {
   margin: 0 20px 20px;
   background-color: $dark-lighter;
@@ -410,7 +406,6 @@
   }
 }
 
-// Assets section
 .assets-section {
   margin: 0 20px 20px;
   background-color: $dark-lighter;
@@ -575,7 +570,122 @@
   font-weight: 600;
 }
 
-// Responsive design
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal-container {
+  background-color: $dark-lighter;
+  border-radius: 8px;
+  width: 500px;
+  max-width: 90%;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h2 {
+    color: $white;
+    font-size: 20px;
+    margin: 0;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    color: $light-gray;
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $ambar;
+    }
+  }
+}
+
+.form-group {
+  margin-bottom: 15px;
+
+  label {
+    display: block;
+    color: $light-gray;
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: $dark;
+    border: 1px solid $dark-lightest;
+    border-radius: 4px;
+    color: $white;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $ambar;
+    }
+  }
+
+  .error-message {
+    color: $red;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+
+  .btn-cancel, .btn-confirm {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-cancel {
+    background-color: $dark;
+    color: $light-gray;
+
+    &:hover {
+      background-color: darken($dark, 10%);
+    }
+  }
+
+  .btn-confirm {
+    background-color: $ambar;
+    color: $dark;
+
+    &:hover {
+      background-color: darken($ambar, 10%);
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .header-summary {
     flex-direction: column;
