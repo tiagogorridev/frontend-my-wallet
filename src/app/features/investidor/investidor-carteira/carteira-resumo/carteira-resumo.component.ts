@@ -35,35 +35,17 @@ export class CarteiraResumoComponent implements OnInit {
     { name: 'CRIPTOMOEDAS', isExpanded: false }
   ];
 
-  isModalOpen = false;
-  assetForm!: FormGroup;
-
-  assetTypes = [
-    { value: 'crypto', label: 'Criptomoeda' },
-    { value: 'fixed-income', label: 'Renda Fixa' },
-    { value: 'stocks', label: 'Ações' },
-    { value: 'fiis', label: 'FIIS' }
-  ];
-
   private chartInstance: Chart | null = null;
 
   constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
-    this.initForm();
     this.createPatrimonioChart();
     this.createAssetsDistributionChart();
   }
 
-  initForm() {
-    this.assetForm = this.fb.group({
-      type: ['', Validators.required],
-      name: ['', Validators.required],
-      currentPrice: ['', [Validators.required, Validators.min(0)]],
-      purchaseDate: ['', Validators.required],
-      quantity: ['', [Validators.required, Validators.min(0)]],
-      purchaseValue: ['', [Validators.required, Validators.min(0)]]
-    });
+  onAssetAdded(assetData: any) {
+    console.log('Novo ativo adicionado:', assetData);
   }
 
   toggleDropdown(dropdown: any) {
@@ -216,35 +198,6 @@ export class CarteiraResumoComponent implements OnInit {
 
     category.isExpanded = !category.isExpanded;
   }
-
-  openModal() {
-    this.isModalOpen = true;
-  }
-
-  closeModal() {
-    this.isModalOpen = false;
-    this.assetForm.reset();
-  }
-
-  onSubmit() {
-    if (this.assetForm.valid) {
-      console.log(this.assetForm.value);
-      this.closeModal();
-    } else {
-      Object.keys(this.assetForm.controls).forEach(field => {
-        const control = this.assetForm.get(field);
-        control?.markAsTouched();
-      });
-    }
-  }
-
-  @HostListener('document:keydown.escape', ['$event'])
-  handleEscapeKey(event: KeyboardEvent) {
-    if (this.isModalOpen) {
-      this.closeModal();
-    }
-  }
-
   private getMonthYearLabel(date: Date): string {
     const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
     return `${months[date.getMonth()]} / ${date.getFullYear()}`;

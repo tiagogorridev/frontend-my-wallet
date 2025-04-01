@@ -25,16 +25,6 @@ interface Dropdown {
   styleUrls: ['./carteira-lancamentos.component.scss']
 })
 export class CarteiraLancamentosComponent implements OnInit {
-  isModalOpen = false;
-  assetForm!: FormGroup;
-
-  assetTypes = [
-    { value: 'crypto', label: 'Criptomoeda' },
-    { value: 'fixed-income', label: 'Renda Fixa' },
-    { value: 'stocks', label: 'Ações' },
-    { value: 'fiis', label: 'FIIS' }
-  ];
-
   lancamentos: Lancamento[] = [
     {
       data: '20/11/2024',
@@ -110,32 +100,12 @@ export class CarteiraLancamentosComponent implements OnInit {
     document.removeEventListener('click', this.closeDropdowns.bind(this));
   }
 
-  onSubmit(): void {
-    if (this.assetForm.valid) {
-      console.log(this.assetForm.value);
-      this.closeModal();
-    } else {
-      Object.keys(this.assetForm.controls).forEach(field => {
-        const control = this.assetForm.get(field);
-        control?.markAsTouched();
-      });
-    }
-  }
-
-  openModal(): void {
-    this.isModalOpen = true;
-  }
-
-  closeModal(): void {
-    this.isModalOpen = false;
-    this.assetForm.reset();
+  onAssetAdded(assetData: any) {
+    console.log('Novo ativo adicionado:', assetData);
   }
 
   @HostListener('document:keydown.escape')
   handleEscapeKey(): void {
-    if (this.isModalOpen) {
-      this.closeModal();
-    }
     this.closeDropdowns();
   }
 

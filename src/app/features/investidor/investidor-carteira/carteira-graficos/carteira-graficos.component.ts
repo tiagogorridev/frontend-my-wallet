@@ -25,16 +25,6 @@ export class CarteiraGraficosComponent implements OnInit {
   @ViewChild('annualReturnChart', { static: true }) annualReturnChartRef!: ElementRef;
   @ViewChild('categoryDistributionChart', { static: true }) categoryDistributionChartRef!: ElementRef;
 
-  isModalOpen = false;
-  assetForm!: FormGroup;
-
-  assetTypes = [
-    { value: 'crypto', label: 'Criptomoeda' },
-    { value: 'fixed-income', label: 'Renda Fixa' },
-    { value: 'stocks', label: 'Ações' },
-    { value: 'fiis', label: 'FIIS' }
-  ];
-
   dropdowns: Dropdown[] = [
     {
       label: '12 MESES',
@@ -66,7 +56,6 @@ export class CarteiraGraficosComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.initForm();
     this.initializeCharts();
   }
 
@@ -77,49 +66,9 @@ export class CarteiraGraficosComponent implements OnInit {
     this.createCategoryDistributionChart();
   }
 
-  initForm(): void {
-    this.assetForm = this.fb.group({
-      type: ['', Validators.required],
-      name: ['', Validators.required],
-      currentPrice: ['', [Validators.required, Validators.min(0)]],
-      purchaseDate: ['', Validators.required],
-      quantity: ['', [Validators.required, Validators.min(0)]],
-      purchaseValue: ['', [Validators.required, Validators.min(0)]]
-    });
-  }
-
-  onSubmit(): void {
-    if (this.assetForm.valid) {
-      console.log(this.assetForm.value);
-      this.closeModal();
-    } else {
-      Object.keys(this.assetForm.controls).forEach(field => {
-        const control = this.assetForm.get(field);
-        control?.markAsTouched();
-      });
-    }
-  }
-
-  @HostListener('document:keydown.escape')
-  handleEscapeKey(): void {
-    if (this.isModalOpen) {
-      this.closeModal();
-    }
-  }
-
   @HostListener('document:click')
   onDocumentClick(): void {
     this.dropdowns.forEach(dropdown => dropdown.isOpen = false);
-  }
-
-  openModal(): void {
-    this.initForm();
-    this.isModalOpen = true;
-  }
-
-  closeModal(): void {
-    this.isModalOpen = false;
-    this.assetForm.reset();
   }
 
   toggleDropdown(dropdown: Dropdown): void {
@@ -157,6 +106,10 @@ export class CarteiraGraficosComponent implements OnInit {
 
   updatePerformanceTable(timeframe: string): void {
     console.log(`Performance table filtered by: ${timeframe}`);
+  }
+
+  onAssetAdded(assetData: any) {
+    console.log('Novo ativo adicionado:', assetData);
   }
 
   private getMonthYearLabel(date: Date): string {
