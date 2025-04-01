@@ -5,25 +5,149 @@
       <div class="section-header">
         <h2>Lançamentos</h2>
         <div class="filters">
-          <div class="filter-dropdown">
-            <span>ÚLTIMOS 30 DIAS</span>
-            <span class="dropdown-icon">▼</span>
+          <div class="filter-dropdown" (click)="$event.stopPropagation()">
+            <div class="dropdown-trigger" (click)="toggleDropdown(dropdowns[0])">
+              <span>{{ dropdowns[0].label }}</span>
+              <span class="dropdown-icon">▼</span>
+            </div>
+            <ul class="dropdown-menu" *ngIf="dropdowns[0].isOpen">
+              <li
+                *ngFor="let option of dropdowns[0].options"
+                (click)="selectOption(dropdowns[0], option)"
+              >
+                {{ option }}
+              </li>
+            </ul>
           </div>
-          <div class="filter-dropdown">
-            <span>TODOS OS TIPOS</span>
-            <span class="dropdown-icon">▼</span>
+
+          <div class="filter-dropdown" (click)="$event.stopPropagation()">
+            <div class="dropdown-trigger" (click)="toggleDropdown(dropdowns[1])">
+              <span>{{ dropdowns[1].label }}</span>
+              <span class="dropdown-icon">▼</span>
+            </div>
+            <ul class="dropdown-menu" *ngIf="dropdowns[1].isOpen">
+              <li
+                *ngFor="let option of dropdowns[1].options"
+                (click)="selectOption(dropdowns[1], option)"
+              >
+                {{ option }}
+              </li>
+            </ul>
           </div>
-          <button class="add-lancamento-btn">Novo Lançamento +</button>
+          <button class="add-lancamento-btn" (click)="openModal()">Adicionar Ativo +</button>
         </div>
       </div>
 
-      <div class="lancamentos-container">
-        <div class="lancamentos-tabs">
-          <div class="tab active">Todos</div>
-          <div class="tab">Compras</div>
-          <div class="tab">Vendas</div>
-          <div class="tab">Dividendos</div>
-          <div class="tab">Transferências</div>
+      <div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
+        <div class="modal-container" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h2>Adicionar Novo Ativo</h2>
+            <button class="close-btn" (click)="closeModal()">✕</button>
+          </div>
+
+          <form [formGroup]="assetForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+              <label for="type">Tipo de Ativo</label>
+              <select id="type" formControlName="type" class="form-control">
+                <option value="">Selecione o tipo</option>
+                <option *ngFor="let type of assetTypes" [value]="type.value">
+                  {{ type.label }}
+                </option>
+              </select>
+              <div *ngIf="assetForm.get('type')?.touched && assetForm.get('type')?.invalid" class="error-message">
+                Tipo de ativo é obrigatório
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="name">Nome do Ativo</label>
+              <input
+                type="text"
+                id="name"
+                formControlName="name"
+                class="form-control"
+                placeholder="Ex: Bitcoin, Tesouro Direto"
+              >
+              <div *ngIf="assetForm.get('name')?.touched && assetForm.get('name')?.invalid" class="error-message">
+                Nome do ativo é obrigatório
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="currentPrice">Preço Atual</label>
+              <input
+                type="number"
+                id="currentPrice"
+                formControlName="currentPrice"
+                class="form-control"
+                step="0.01"
+                placeholder="R$ 0,00"
+              >
+              <div *ngIf="assetForm.get('currentPrice')?.touched && assetForm.get('currentPrice')?.invalid" class="error-message">
+                Preço atual inválido
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="purchaseDate">Data de Compra</label>
+              <input
+                type="date"
+                id="purchaseDate"
+                formControlName="purchaseDate"
+                class="form-control"
+              >
+              <div *ngIf="assetForm.get('purchaseDate')?.touched && assetForm.get('purchaseDate')?.invalid" class="error-message">
+                Data de compra é obrigatória
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="quantity">Quantidade</label>
+              <input
+                type="number"
+                id="quantity"
+                formControlName="quantity"
+                class="form-control"
+                step="0.001"
+                placeholder="0,000"
+              >
+              <div *ngIf="assetForm.get('quantity')?.touched && assetForm.get('quantity')?.invalid" class="error-message">
+                Quantidade inválida
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="purchaseValue">Valor Comprado</label>
+              <input
+                type="number"
+                id="purchaseValue"
+                formControlName="purchaseValue"
+                class="form-control"
+                step="0.01"
+                placeholder="R$ 0,00"
+              >
+              <div *ngIf="assetForm.get('purchaseValue')?.touched && assetForm.get('purchaseValue')?.invalid" class="error-message">
+                Valor de compra inválido
+              </div>
+            </div>
+
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" (click)="closeModal()">Cancelar</button>
+              <button type="submit" class="btn-confirm">Adicionar Ativo</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="categorias-container">
+        <div class="categoria-tabs">
+          <button
+            *ngFor="let categoria of categorias"
+            (click)="selecionarCategoria(categoria)"
+            [class.active]="categoriaSelecionada === categoria"
+          >
+            {{ categoria }}
+          </button>
         </div>
 
         <div class="lancamentos-table-container">
@@ -37,112 +161,52 @@
                 <th>Quantidade</th>
                 <th>Valor Unitário</th>
                 <th>Valor Total</th>
-                <th>Ações</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>20/03/2025</td>
+              <tr *ngFor="let lancamento of filtrarLancamentos()">
+                <td>{{ lancamento.data }}</td>
                 <td>
-                  <div class="lancamento-tipo compra">Compra</div>
+                  <span
+                    class="lancamento-tipo"
+                    [ngClass]="{
+                      'compra': lancamento.tipo === 'Compra',
+                      'venda': lancamento.tipo === 'Venda',
+                      'dividendo': lancamento.tipo === 'Dividendo'
+                    }"
+                  >
+                    {{ lancamento.tipo }}
+                  </span>
                 </td>
-                <td class="asset-name">
-                  <div class="asset-icon crypto"></div>
-                  BTC
-                </td>
-                <td>Compra de Bitcoin</td>
-                <td>0,05</td>
-                <td>R$ 78.500,00</td>
-                <td>R$ 3.925,00</td>
-                <td>
-                  <div class="acoes-container">
-                    <button class="action-btn edit"><i class="fa fa-edit"></i></button>
-                    <button class="action-btn delete"><i class="fa fa-trash"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>15/03/2025</td>
-                <td>
-                  <div class="lancamento-tipo venda">Venda</div>
-                </td>
-                <td class="asset-name">
-                  <div class="asset-icon crypto"></div>
-                  ETH
-                </td>
-                <td>Venda de Ethereum</td>
-                <td>0,8</td>
-                <td>R$ 4.120,00</td>
-                <td>R$ 3.296,00</td>
-                <td>
-                  <div class="acoes-container">
-                    <button class="action-btn edit"><i class="fa fa-edit"></i></button>
-                    <button class="action-btn delete"><i class="fa fa-trash"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>10/03/2025</td>
-                <td>
-                  <div class="lancamento-tipo dividendo">Dividendo</div>
-                </td>
-                <td class="asset-name">
-                  <div class="asset-icon fis"></div>
-                  PETR4
-                </td>
-                <td>Dividendo Petrobras</td>
-                <td>50</td>
-                <td>R$ 2,35</td>
-                <td>R$ 117,50</td>
-                <td>
-                  <div class="acoes-container">
-                    <button class="action-btn edit"><i class="fa fa-edit"></i></button>
-                    <button class="action-btn delete"><i class="fa fa-trash"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>05/03/2025</td>
-                <td>
-                  <div class="lancamento-tipo transferencia">Transferência</div>
-                </td>
-                <td class="asset-name">
-                  <div class="asset-icon"></div>
-                  --
-                </td>
-                <td>Transferência para conta</td>
-                <td>--</td>
-                <td>--</td>
-                <td>R$ 2.000,00</td>
-                <td>
-                  <div class="acoes-container">
-                    <button class="action-btn edit"><i class="fa fa-edit"></i></button>
-                    <button class="action-btn delete"><i class="fa fa-trash"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>01/03/2025</td>
-                <td>
-                  <div class="lancamento-tipo compra">Compra</div>
-                </td>
-                <td class="asset-name">
-                  <div class="asset-icon fis"></div>
-                  VALE3
-                </td>
-                <td>Compra de Vale</td>
-                <td>30</td>
-                <td>R$ 68,75</td>
-                <td>R$ 2.062,50</td>
-                <td>
-                  <div class="acoes-container">
-                    <button class="action-btn edit"><i class="fa fa-edit"></i></button>
-                    <button class="action-btn delete"><i class="fa fa-trash"></i></button>
-                  </div>
-                </td>
+                <td>{{ lancamento.ativo }}</td>
+                <td>{{ lancamento.descricao }}</td>
+                <td>{{ lancamento.quantidade }}</td>
+                <td>R$ {{ lancamento.valorUnitario | number:'1.2-2' }}</td>
+                <td>R$ {{ lancamento.valorTotal | number:'1.2-2' }}</td>
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <div class="categoria-summary">
+          <div class="summary-card">
+            <div class="card-title">Total Investido</div>
+            <div class="card-value">
+              R$ {{ calcularTotalInvestido(filtrarLancamentos()) | number:'1.2-2' }}
+            </div>
+          </div>
+          <div class="summary-card">
+            <div class="card-title">Total Resgatado</div>
+            <div class="card-value">
+              R$ {{ calcularTotalResgatado(filtrarLancamentos()) | number:'1.2-2' }}
+            </div>
+          </div>
+          <div class="summary-card">
+            <div class="card-title">Dividendos</div>
+            <div class="card-value positive">
+              R$ {{ calcularDividendos(filtrarLancamentos()) | number:'1.2-2' }}
+            </div>
+          </div>
         </div>
 
         <div class="lancamentos-pagination">
@@ -155,6 +219,31 @@
             <button class="page-btn">10</button>
           </div>
           <button class="pagination-btn next">Próximo</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="lancamentos-summary">
+      <div class="summary-header">
+        <h3>Resumo do Período</h3>
+        <div class="period-display">01/03/2025 - 20/03/2025</div>
+      </div>
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="card-title">Total Investido</div>
+          <div class="card-value">R$ 5.987,50</div>
+        </div>
+        <div class="summary-card">
+          <div class="card-title">Total Resgatado</div>
+          <div class="card-value">R$ 3.296,00</div>
+        </div>
+        <div class="summary-card">
+          <div class="card-title">Rendimentos</div>
+          <div class="card-value positive">R$ 117,50</div>
+        </div>
+        <div class="summary-card">
+          <div class="card-title">Saldo</div>
+          <div class="card-value">R$ 2.809,00</div>
         </div>
       </div>
     </section>
