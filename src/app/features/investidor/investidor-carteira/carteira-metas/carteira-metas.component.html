@@ -4,7 +4,98 @@
     <section class="goals-summary">
       <div class="section-header">
         <h2>Resumo das Metas</h2>
-        <button class="add-goal-btn">Nova Meta +</button>
+        <button class="add-goal-btn" (click)="openAddGoalModal()">Nova Meta +</button>
+        <div class="modal-overlay" *ngIf="isAddGoalModalOpen">
+          <div class="modal-container">
+            <div class="modal-header">
+              <h2>Adicionar Nova Meta</h2>
+              <button class="close-btn" (click)="closeModal()">&times;</button>
+            </div>
+
+            <form [formGroup]="addGoalForm" (ngSubmit)="onSubmit()" class="add-goal-form">
+              <div class="form-group">
+                <label for="title">Título da Meta</label>
+                <input
+                  type="text"
+                  id="title"
+                  formControlName="title"
+                  placeholder="Ex: Reserva de Emergência"
+                >
+                <div *ngIf="isFieldInvalid('title')" class="error-message">
+                  Título é obrigatório e deve ter no mínimo 3 caracteres
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="assetType">Tipo de Ativo</label>
+                <select
+                  id="assetType"
+                  formControlName="assetType"
+                >
+                  <option value="">Selecione um tipo de ativo</option>
+                  <option *ngFor="let type of assetTypes" [value]="type.value">
+                    {{ type.label }}
+                  </option>
+                </select>
+                <div *ngIf="isFieldInvalid('assetType')" class="error-message">
+                  Selecione um tipo de ativo
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="term">Prazo</label>
+                <select
+                  id="term"
+                  formControlName="term"
+                >
+                  <option value="">Selecione o prazo</option>
+                  <option *ngFor="let term of termOptions" [value]="term.value">
+                    {{ term.label }}
+                  </option>
+                </select>
+                <div *ngIf="isFieldInvalid('term')" class="error-message">
+                  Selecione o prazo da meta
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="completionDate">Data de Conclusão</label>
+                <input
+                  type="date"
+                  id="completionDate"
+                  formControlName="completionDate"
+                >
+                <div *ngIf="isFieldInvalid('completionDate')" class="error-message">
+                  Selecione uma data de conclusão
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="targetValue">Valor da Meta</label>
+                <input
+                  type="number"
+                  id="targetValue"
+                  formControlName="targetValue"
+                  placeholder="Digite o valor total da meta"
+                >
+                <div *ngIf="isFieldInvalid('targetValue')" class="error-message">
+                  Digite um valor válido maior que zero
+                </div>
+              </div>
+
+              <div class="modal-actions">
+                <button type="button" class="cancel-btn" (click)="closeModal()">Cancelar</button>
+                <button
+                  type="submit"
+                  class="save-btn"
+                  [disabled]="addGoalForm.invalid"
+                >
+                  Salvar Meta
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
       <div class="goals-stats">
         <div class="goal-stat-card">
@@ -46,122 +137,173 @@
     <div class="goals-header">
       <h2>Minhas Metas</h2>
       <div class="goals-tabs">
-        <button class="goal-tab active">Todas</button>
-        <button class="goal-tab">Em andamento</button>
-        <button class="goal-tab">Concluídas</button>
+        <button
+          class="goal-tab"
+          [class.active]="currentFilter === 'all'"
+          (click)="applyFilter('all')">
+          Todas
+        </button>
+        <button
+          class="goal-tab"
+          [class.active]="currentFilter === 'in_progress'"
+          (click)="applyFilter('in_progress')">
+          Em andamento
+        </button>
+        <button
+          class="goal-tab"
+          [class.active]="currentFilter === 'completed'"
+          (click)="applyFilter('completed')">
+          Concluídas
+        </button>
       </div>
     </div>
 
     <div class="goals-list">
-      <!-- Meta em andamento -->
-      <div class="goal-card">
+      <div
+        *ngFor="let goal of filteredGoals"
+        class="goal-card"
+        [class.completed]="goal.status === 'completed'"
+      >
         <div class="goal-header">
           <div class="goal-title-container">
-            <div class="goal-icon reserve"></div>
+            <div class="goal-icon {{ goal.icon }}"></div>
             <div class="goal-title-info">
-              <h3 class="goal-title">Reserva de Emergência</h3>
-              <span class="goal-subtitle">Curto prazo • Essencial</span>
+              <h3 class="goal-title">{{ goal.title }}</h3>
+              <span class="goal-subtitle">{{ goal.subtitle }}</span>
             </div>
           </div>
-          <div class="goal-actions">
-            <button class="goal-action-btn"><span class="action-icon edit">✏️</span></button>
+          <div class="goal-actions" *ngIf="goal.status === 'in_progress'">
+            <button class="goal-action-btn" (click)="openEditGoalModal(goal)"><span class="action-icon edit">✏️</span></button>
             <button class="goal-action-btn"><span class="action-icon delete">🗑️</span></button>
           </div>
-        </div>
-        <div class="goal-progress">
-          <div class="progress-info">
-            <div class="current-value">R$ 3.500,00</div>
-            <div class="target-value">R$ 6.000,00</div>
-          </div>
-          <div class="progress-bar">
-            <div class="progress" style="width: 58%;"></div>
-          </div>
-          <div class="progress-percentage">58%</div>
-        </div>
-        <div class="goal-details">
-          <div class="goal-detail">
-            <span class="detail-label">Data alvo:</span>
-            <span class="detail-value">31/12/2025</span>
-          </div>
-          <div class="goal-detail">
-            <span class="detail-label">Estratégia:</span>
-            <span class="detail-value">100% Renda Fixa</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Meta concluída -->
-      <div class="goal-card completed">
-        <div class="goal-header">
-          <div class="goal-title-container">
-            <div class="goal-icon vacation"></div>
-            <div class="goal-title-info">
-              <h3 class="goal-title">Viagem para Europa</h3>
-              <span class="goal-subtitle">Médio prazo • Lazer</span>
-            </div>
-          </div>
-          <div class="goal-status">
+          <div class="goal-status" *ngIf="goal.status === 'completed'">
             <span class="status-badge">Concluída</span>
           </div>
         </div>
         <div class="goal-progress">
           <div class="progress-info">
-            <div class="current-value">R$ 15.000,00</div>
-            <div class="target-value">R$ 15.000,00</div>
+            <div class="current-value">R$ {{ goal.currentValue.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) }}</div>
+            <div class="target-value">R$ {{ goal.targetValue.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) }}</div>
           </div>
           <div class="progress-bar">
-            <div class="progress" style="width: 100%;"></div>
+            <div class="progress" [style.width.%]="calculateProgressPercentage(goal)"></div>
           </div>
-          <div class="progress-percentage">100%</div>
+          <div class="progress-percentage">{{ calculateProgressPercentage(goal).toFixed(0) }}%</div>
         </div>
         <div class="goal-details">
           <div class="goal-detail">
-            <span class="detail-label">Concluída em:</span>
-            <span class="detail-value">15/01/2025</span>
-          </div>
-          <div class="goal-detail">
-            <span class="detail-label">Estratégia:</span>
-            <span class="detail-value">70% RF / 30% Criptos</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Meta em andamento -->
-      <div class="goal-card">
-        <div class="goal-header">
-          <div class="goal-title-container">
-            <div class="goal-icon house"></div>
-            <div class="goal-title-info">
-              <h3 class="goal-title">Entrada para Imóvel</h3>
-              <span class="goal-subtitle">Longo prazo • Patrimonial</span>
-            </div>
-          </div>
-          <div class="goal-actions">
-            <button class="goal-action-btn"><span class="action-icon edit">✏️</span></button>
-            <button class="goal-action-btn"><span class="action-icon delete">🗑️</span></button>
-          </div>
-        </div>
-        <div class="goal-progress">
-          <div class="progress-info">
-            <div class="current-value">R$ 35.000,00</div>
-            <div class="target-value">R$ 100.000,00</div>
-          </div>
-          <div class="progress-bar">
-            <div class="progress" style="width: 35%;"></div>
-          </div>
-          <div class="progress-percentage">35%</div>
-        </div>
-        <div class="goal-details">
-          <div class="goal-detail">
-            <span class="detail-label">Data alvo:</span>
-            <span class="detail-value">01/01/2028</span>
-          </div>
-          <div class="goal-detail">
-            <span class="detail-label">Estratégia:</span>
-            <span class="detail-value">60% RF / 30% FIIs / 10% Ações</span>
+            <span class="detail-label">{{ goal.status === 'completed' ? 'Concluída em:' : 'Data alvo:' }}</span>
+            <span class="detail-value">{{ goal.targetDate }}</span>
           </div>
         </div>
       </div>
     </div>
   </section>
+
+  <div class="modal-overlay" *ngIf="isEditGoalModalOpen">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2>Editar Meta</h2>
+        <button class="close-btn" (click)="closeModal()">&times;</button>
+      </div>
+
+      <form [formGroup]="editGoalForm" (ngSubmit)="onSubmitEdit()" class="add-goal-form">
+        <input type="hidden" formControlName="id">
+
+        <div class="form-group">
+          <label for="edit-title">Título da Meta</label>
+          <input
+            type="text"
+            id="edit-title"
+            formControlName="title"
+            placeholder="Ex: Reserva de Emergência"
+          >
+          <div *ngIf="isFieldInvalid('title', editGoalForm)" class="error-message">
+            Título é obrigatório e deve ter no mínimo 3 caracteres
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="edit-assetType">Tipo de Ativo</label>
+          <select
+            id="edit-assetType"
+            formControlName="assetType"
+          >
+            <option value="">Selecione um tipo de ativo</option>
+            <option *ngFor="let type of assetTypes" [value]="type.value">
+              {{ type.label }}
+            </option>
+          </select>
+          <div *ngIf="isFieldInvalid('assetType', editGoalForm)" class="error-message">
+            Selecione um tipo de ativo
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="edit-term">Prazo</label>
+          <select
+            id="edit-term"
+            formControlName="term"
+          >
+            <option value="">Selecione o prazo</option>
+            <option *ngFor="let term of termOptions" [value]="term.value">
+              {{ term.label }}
+            </option>
+          </select>
+          <div *ngIf="isFieldInvalid('term', editGoalForm)" class="error-message">
+            Selecione o prazo da meta
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="edit-completionDate">Data de Conclusão</label>
+          <input
+            type="date"
+            id="edit-completionDate"
+            formControlName="completionDate"
+          >
+          <div *ngIf="isFieldInvalid('completionDate', editGoalForm)" class="error-message">
+            Selecione uma data de conclusão
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="edit-targetValue">Valor Alvo</label>
+          <input
+            type="number"
+            id="edit-targetValue"
+            formControlName="targetValue"
+            placeholder="Digite o valor total da meta"
+          >
+          <div *ngIf="isFieldInvalid('targetValue', editGoalForm)" class="error-message">
+            Digite um valor válido maior que zero
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="edit-currentValue">Valor Atual</label>
+          <input
+            type="number"
+            id="edit-currentValue"
+            formControlName="currentValue"
+            placeholder="Digite o valor atual alcançado"
+          >
+          <div *ngIf="isFieldInvalid('currentValue', editGoalForm)" class="error-message">
+            Digite um valor válido
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="cancel-btn" (click)="closeModal()">Cancelar</button>
+          <button
+            type="submit"
+            class="save-btn"
+            [disabled]="editGoalForm.invalid"
+          >
+            Salvar Alterações
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
